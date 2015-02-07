@@ -2,34 +2,34 @@
 # Competition
 # < Bike Sharing Demand >
 
-# ¼¼¹Ì³ª ½Ã°£ 2½Ã°£
-# ÀÏÀÚ : 1¿ù 17ÀÏ Åä¿äÀÏ °»³².
-# ¹®Á¦Çª´Â ½Ã°£. Ä³±Û ¼Ò°³, ¹®Á¦ ¼³¸í, µ¥ÀÌÅÍ ÁÖ°í, µµÀü
-# Áß°£Áß°£ ¹Ì¸® ÁØºñÇÑ ÄÚµå º¸¿©ÁÖ¸ç Àâ¾ÆÁÖ±â. ÀüÃ¼ ÇÁ·Î¼¼½º °æÇè
+# ì„¸ë¯¸ë‚˜ ì‹œê°„ 2ì‹œê°„
+# ì¼ì : 1ì›” 17ì¼ í† ìš”ì¼ ê°±ë‚¨.
+# ë¬¸ì œí‘¸ëŠ” ì‹œê°„. ìºê¸€ ì†Œê°œ, ë¬¸ì œ ì„¤ëª…, ë°ì´í„° ì£¼ê³ , ë„ì „
+# ì¤‘ê°„ì¤‘ê°„ ë¯¸ë¦¬ ì¤€ë¹„í•œ ì½”ë“œ ë³´ì—¬ì£¼ë©° ì¡ì•„ì£¼ê¸°. ì „ì²´ í”„ë¡œì„¸ìŠ¤ ê²½í—˜
 
-# 1. »óÈ² ÆÄ¾ÇÇÏ±â(µ¥ÀÌÅÍ¼Â ºÒ·¯¿À±â)
+# 1. ìƒí™© íŒŒì•…í•˜ê¸°(ë°ì´í„°ì…‹ ë¶ˆëŸ¬ì˜¤ê¸°)
 
 sample_submission = read.csv("sampleSubmission.csv", header = TRUE)
 test = read.csv("test.csv", header = TRUE)
 train = read.csv("train.csv", header = TRUE)
 
-head(sample_submission, 20) # Á¦Ãâ Çü½ÄÀ» È®ÀÎÇØº¾½Ã´Ù.
-head(train, 20) # ¸ğµ¨ »ı¼º µ¥ÀÌÅÍ¼ÂÀ» È®ÀÎÇØº¾½Ã´Ù.
-head(test, 20) # °ËÁõ µ¥ÀÌÅÍ¼ÂÀ» È®ÀÎÇØº¾½Ã´Ù.
+head(sample_submission, 20) # ì œì¶œ í˜•ì‹ì„ í™•ì¸í•´ë´…ì‹œë‹¤.
+head(train, 20) # ëª¨ë¸ ìƒì„± ë°ì´í„°ì…‹ì„ í™•ì¸í•´ë´…ì‹œë‹¤.
+head(test, 20) # ê²€ì¦ ë°ì´í„°ì…‹ì„ í™•ì¸í•´ë´…ì‹œë‹¤.
 
 summary(train)
 summary(test)
 summary(sample_submission)
 
-# 2. ¸ñÇ¥ Á¤ÇÏ±â
+# 2. ëª©í‘œ ì •í•˜ê¸°
 
-# ¿ì¸®°¡ ¿¹ÃøÇØ¾ß ÇÒ º¯¼ö´Â?
+# ìš°ë¦¬ê°€ ì˜ˆì¸¡í•´ì•¼ í•  ë³€ìˆ˜ëŠ”?
 
 head(sample_submission)
-# count ÀÔ´Ï´Ù.
+# count ì…ë‹ˆë‹¤.
 
 
-# °¢ º¯¼ö¿¡ ´ëÇÑ ÀÌÇØ!
+# ê° ë³€ìˆ˜ì— ëŒ€í•œ ì´í•´!
 
 # join $ -> take -> ride -> return
 
@@ -50,37 +50,37 @@ head(sample_submission)
 # count - number of total rentals
 
 
-# Á» ´õ ¾Ë¾Æº¸ÀÚ
+# ì¢€ ë” ì•Œì•„ë³´ì
 
 sub_date = as.data.frame(substr(train[,"datetime"], 1, 10))
 
 sub_unique_date = unique(sub_date)
 start_end = c(as.character(sub_unique_date[1,]), as.character(sub_unique_date[nrow(sub_unique_date),]))
-start_end # ½ÃÀÛÀÏ, Á¾·áÀÏ È®ÀÎ
+start_end # ì‹œì‘ì¼, ì¢…ë£Œì¼ í™•ì¸
 
 difftime(sub_unique_date[nrow(sub_unique_date),1], sub_unique_date[1,1])
-nrow(sub_unique_date) # ½ÃÀÛ°ú ³¡ÀÇ Â÷ÀÌ´Â 718ÀÏ, º¸À¯ µ¥ÀÌÅÍ 456ÀÏ. ¾à 40%Á¤µµÀÇ µ¥ÀÌÅÍ°¡ ¾ø´Ù.
+nrow(sub_unique_date) # ì‹œì‘ê³¼ ëì˜ ì°¨ì´ëŠ” 718ì¼, ë³´ìœ  ë°ì´í„° 456ì¼. ì•½ 40%ì •ë„ì˜ ë°ì´í„°ê°€ ì—†ë‹¤.
 
 
-nchar(as.character(train[1,1])) # ¸î ±ÛÀÚ·Î ½Ã°£ÀÌ Ç¥ÇöµÇ¾ú´ÂÁö È®ÀÎÇØº¾½Ã´Ù.
-train_sub_date = as.data.frame(substr(train[,1], 1, 10))  # ³¯Â¥
-train_sub_year = as.data.frame(as.numeric(substr(train[,1], 1, 4)))  # ³âµµ
-train_sub_month = as.data.frame(as.numeric(substr(train[,1], 6, 7)))  # ¿ù
-train_sub_day = as.data.frame(as.numeric(substr(train[,1], 9, 10)))  # ÀÏ
-train_sub_hour = as.data.frame(as.numeric(substr(train[,1], 12, 13)))  # ½Ã°£
+nchar(as.character(train[1,1])) # ëª‡ ê¸€ìë¡œ ì‹œê°„ì´ í‘œí˜„ë˜ì—ˆëŠ”ì§€ í™•ì¸í•´ë´…ì‹œë‹¤.
+train_sub_date = as.data.frame(substr(train[,1], 1, 10))  # ë‚ ì§œ
+train_sub_year = as.data.frame(as.numeric(substr(train[,1], 1, 4)))  # ë…„ë„
+train_sub_month = as.data.frame(as.numeric(substr(train[,1], 6, 7)))  # ì›”
+train_sub_day = as.data.frame(as.numeric(substr(train[,1], 9, 10)))  # ì¼
+train_sub_hour = as.data.frame(as.numeric(substr(train[,1], 12, 13)))  # ì‹œê°„
 
-head(train_sub_date) # ½Ã°£ È®ÀÎ ¤¡¤¡
+head(train_sub_date) # ì‹œê°„ í™•ì¸ ã„±ã„±
 
 train_sub = cbind(train_sub_date, train_sub_year, train_sub_month, train_sub_day, train_sub_hour, train[,2:ncol(train)])
 head(train_sub)
 
-colnames(train_sub) = c("date", "year", "month", "day", "hour", colnames(train_sub)[6:ncol(train_sub)]) # ÀÌ¸§ ¹Ù²ãÁÖ±â
+colnames(train_sub) = c("date", "year", "month", "day", "hour", colnames(train_sub)[6:ncol(train_sub)]) # ì´ë¦„ ë°”ê¿”ì£¼ê¸°
 head(train_sub)
 
 
-# °áÃø°ª¿¡ ´ëÇÑ ÀÌÇØ!
+# ê²°ì¸¡ê°’ì— ëŒ€í•œ ì´í•´!
 
-summary(train_sub) # °áÃøÄ¡(NA)°¡ ¾ø´Ù.
+summary(train_sub) # ê²°ì¸¡ì¹˜(NA)ê°€ ì—†ë‹¤.
 
 year_unique = unique(train_sub$year)
 month_unique = unique(train_sub$month)
@@ -89,16 +89,16 @@ year_unique
 month_unique
 
 
-table(train_sub$hour) # ½Ã°£ º°·Î ¼ıÀÚ°¡ ´Ù¸§ -> µ¥ÀÌÅÍ°¡ Á¶±İ¾¿ ¾øÀ½.
-max(table(train_sub$hour)) # ÃÖ´ë°ª = 456. °áÃøÄ¡°¡ ¾ø´Â °æ¿ìÀÇ µ¥ÀÌÅÍ ¼ö·®ÀÌ 456ÀÏ ¼ö ÀÖ´Ù.
+table(train_sub$hour) # ì‹œê°„ ë³„ë¡œ ìˆ«ìê°€ ë‹¤ë¦„ -> ë°ì´í„°ê°€ ì¡°ê¸ˆì”© ì—†ìŒ.
+max(table(train_sub$hour)) # ìµœëŒ€ê°’ = 456. ê²°ì¸¡ì¹˜ê°€ ì—†ëŠ” ê²½ìš°ì˜ ë°ì´í„° ìˆ˜ëŸ‰ì´ 456ì¼ ìˆ˜ ìˆë‹¤.
 
-# µ¥ÀÌÅÍ¼Â[ ¿­ ¹øÈ£ , Çà ¹øÈ£]
+# ë°ì´í„°ì…‹[ ì—´ ë²ˆí˜¸ , í–‰ ë²ˆí˜¸]
 train_sub[1:24 , 1:4]
-train_sub[25:35 , 1:4] # ´Ù¼¸½ÃÀÇ µ¥ÀÌÅÍ°¡ ¾ø´Ù!!
+train_sub[25:35 , 1:4] # ë‹¤ì„¯ì‹œì˜ ë°ì´í„°ê°€ ì—†ë‹¤!!
 
 
-# Calendar ºÙÀÌ±â
-# 2011³â, 2012³â ´Ş·ÂÀ» ºÒ·¯¿Â´Ù.
+# Calendar ë¶™ì´ê¸°
+# 2011ë…„, 2012ë…„ ë‹¬ë ¥ì„ ë¶ˆëŸ¬ì˜¨ë‹¤.
 
 calendar = read.csv("2011_2012_calendar.csv", header = TRUE)
 head(calendar)
@@ -106,7 +106,7 @@ head(calendar)
 calendar_2 = as.data.frame(matrix(NA, nrow=nrow(calendar)*24, ncol=ncol(calendar)+1))
 head(calendar_2)
 
-# 0½Ã ºÎÅÍ 23½Ã ±îÁö ¼ıÀÚ¸¦ ³ÖÀ¸¸é¼­ 24¹è·Î ´Ã¿©¾ß ÇÑ´Ù.
+# 0ì‹œ ë¶€í„° 23ì‹œ ê¹Œì§€ ìˆ«ìë¥¼ ë„£ìœ¼ë©´ì„œ 24ë°°ë¡œ ëŠ˜ì—¬ì•¼ í•œë‹¤.
 
 matrix_hour = matrix(c(seq(0,23,1)), nrow=24, ncol=1)
 
@@ -128,19 +128,19 @@ head(calendar_2)
 colnames(calendar_2) = c("year", "month", "day", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun", "hour")
 head(calendar_2)
 
-calendar_3 = calendar_2[,c(1,2,3,11,seq(4,10,1))] # ³¡¿¡ ÀÖ´ø "hour" columnÀ» "day" º¯¼ö µÚ·Î ¿Å°ÜÁİ½Ã´Ù.
+calendar_3 = calendar_2[,c(1,2,3,11,seq(4,10,1))] # ëì— ìˆë˜ "hour" columnì„ "day" ë³€ìˆ˜ ë’¤ë¡œ ì˜®ê²¨ì¤ì‹œë‹¤.
 head(calendar_3)
 
-# µ¥ÀÌÅÍ¼ÂÀ» °áÇÕÇØº¾½Ã´Ù.
+# ë°ì´í„°ì…‹ì„ ê²°í•©í•´ë´…ì‹œë‹¤.
 
 # install.packages("plyr")
 library("plyr")
 
 head(train_sub)
-head(calendar_3) # °øÅëµÇ´Â columnÀ» È®ÀÎ.
+head(calendar_3) # ê³µí†µë˜ëŠ” columnì„ í™•ì¸.
 
 train_calendar_join = join(calendar_3, train_sub, type = "left")
-head(train_calendar_join, 50) # 30¹øÂ° row¿¡ °áÃøÄ¡(NA) È®ÀÎ °¡´É
+head(train_calendar_join, 50) # 30ë²ˆì§¸ rowì— ê²°ì¸¡ì¹˜(NA) í™•ì¸ ê°€ëŠ¥
 
 write.csv(train_calendar_join, "train_calendar_join.csv", row.names = FALSE)
 
@@ -186,15 +186,15 @@ train_2 = read.csv("train_2.csv", header = TRUE)
 head(train_2)
 
 
-# °Ü¿ï¿¡´Â Ãâ±Ù½Ã°£¿¡ registeredÀÇ ÀÌ¿ëÀÌ ¸¹°í.
-# °Ü¿ï ÀÌ¿Ü¿¡´Â Åğ±Ù½Ã°£¿¡ registeredÀÇ ÀÌ¿ëÀÌ ¸¹´Ù.
+# ê²¨ìš¸ì—ëŠ” ì¶œê·¼ì‹œê°„ì— registeredì˜ ì´ìš©ì´ ë§ê³ .
+# ê²¨ìš¸ ì´ì™¸ì—ëŠ” í‡´ê·¼ì‹œê°„ì— registeredì˜ ì´ìš©ì´ ë§ë‹¤.
 
-# ÁÖ¸»¿¡´Â registeredÀÇ ´ë¿©ºĞÆ÷°¡ casual°ú ºñ½ÁÇÏ´Ù.
+# ì£¼ë§ì—ëŠ” registeredì˜ ëŒ€ì—¬ë¶„í¬ê°€ casualê³¼ ë¹„ìŠ·í•˜ë‹¤.
 
-# casualÀº °èÀı¿¡ °ü°è¾øÀÌ Á¡½É½Ã°£ ÀÌÈÄ 1~2½Ã¿¡ ÃÖ°íÁ¡À» Âï´Â ¾ç»óÀ» º¸ÀÓ
+# casualì€ ê³„ì ˆì— ê´€ê³„ì—†ì´ ì ì‹¬ì‹œê°„ ì´í›„ 1~2ì‹œì— ìµœê³ ì ì„ ì°ëŠ” ì–‘ìƒì„ ë³´ì„
 
-# casual°ú registeredÀÇ Åë°è¸¦ µû·Î ¸¸µç´Ù.
-# °¢°¢¿¡ ´ëÇÏ¿© ¿ùº° / ½Ã°£º° / ¿äÀÏº° Åë°è¸¦ µû·Î ¸¸µç´Ù.
+# casualê³¼ registeredì˜ í†µê³„ë¥¼ ë”°ë¡œ ë§Œë“ ë‹¤.
+# ê°ê°ì— ëŒ€í•˜ì—¬ ì›”ë³„ / ì‹œê°„ë³„ / ìš”ì¼ë³„ í†µê³„ë¥¼ ë”°ë¡œ ë§Œë“ ë‹¤.
 
 colnames(train_2)
 train_2_month = train_2[, c(2:11, 21, 22)]
@@ -204,7 +204,7 @@ train_2_weekend = train_2[train_2$Sat == 1 | train_2$Sun == 1, c("Sat", "Sun", "
 
 fix(train_2_weekday)
 
-agg_month = aggregate(train_2_month[, c("casual", "registered")], by = list(train_2_month[, "month"]), mean)  # <-- ÀÔ·ÂµÇ´Â µ¥ÀÌÅÍ¼ÂÀÇ nrow¿Í 'by =' ¿¡ µé¾î°¡´Â ¸®½ºÆ® ±æÀÌ°¡ °°¾Æ¾ß ÇÑ´Ù.
+agg_month = aggregate(train_2_month[, c("casual", "registered")], by = list(train_2_month[, "month"]), mean)  # <-- ì…ë ¥ë˜ëŠ” ë°ì´í„°ì…‹ì˜ nrowì™€ 'by =' ì— ë“¤ì–´ê°€ëŠ” ë¦¬ìŠ¤íŠ¸ ê¸¸ì´ê°€ ê°™ì•„ì•¼ í•œë‹¤.
 agg_hour = aggregate(train_2_hour[, c("casual", "registered")], by = list(train_2_hour[, "hour"]), mean)
 agg_weekday = aggregate(train_2_weekday[, c("casual", "registered")], by = list(train_2_weekday[, "hour"]), mean)
 
@@ -257,7 +257,7 @@ ggplot(agg_registered_melt, aes(x = agg_registered_melt$Hour, y = agg_registered
 
 ##################################
 
-# ¿ùº° - ¿äÀÏº°
+# ì›”ë³„ - ìš”ì¼ë³„
 
 head(train_2_month)
 
@@ -306,13 +306,13 @@ ggplot(agg_month_registered_melt, aes(x = agg_month_registered_melt$Month, y = a
 
 
 ##########################################
-# ÆÄ»ıº¯¼ö¸í : factor_x
-#              ¿Âµµ, ½Àµµ, Ç³¼ÓÀ» °í·ÁÇÏ¿© ¸¸µå´Â »õ·Î¿î º¯¼ö
-# Ãß°¡ÀÛ¾÷ : ±×·¡ÇÁ ±×·Áº¸±â
+# íŒŒìƒë³€ìˆ˜ëª… : factor_x
+#              ì˜¨ë„, ìŠµë„, í’ì†ì„ ê³ ë ¤í•˜ì—¬ ë§Œë“œëŠ” ìƒˆë¡œìš´ ë³€ìˆ˜
+# ì¶”ê°€ì‘ì—… : ê·¸ë˜í”„ ê·¸ë ¤ë³´ê¸°
 
 ncol(train_2)
-# º»ÀÎÀÌ Á÷Á¢ °è¼ö¸¦ ÀÔ·ÂÇØ º¾½Ã´Ù.
-# train_2[,ncol(train_2)+1] = round(°è¼ö_1 * train_2$temp + °è¼ö_2 * train_2$humidity + °è¼ö_3 * train_2$windspeed, 3)
+# ë³¸ì¸ì´ ì§ì ‘ ê³„ìˆ˜ë¥¼ ì…ë ¥í•´ ë´…ì‹œë‹¤.
+# train_2[,ncol(train_2)+1] = round(ê³„ìˆ˜_1 * train_2$temp + ê³„ìˆ˜_2 * train_2$humidity + ê³„ìˆ˜_3 * train_2$windspeed, 3)
 
 colnames(train_2) = c(colnames(train_2)[1:(ncol(train_2)-1)], "factor_x")
 head(train_2)
@@ -324,24 +324,24 @@ plot(1:nrow(train_2), train_2$factor_x)
 
 
 ######################################
-# ÆÄ»ıº¯¼ö¸í : work_holi_wtr
-#              ¾÷¹«ÀÏ, ÈŞÀÏ, ³¯¾¾¸¦ Á¶ÇÕÇÏ¿© »õ·Î¿î º¯¼ö »ı¼º
+# íŒŒìƒë³€ìˆ˜ëª… : work_holi_wtr
+#              ì—…ë¬´ì¼, íœ´ì¼, ë‚ ì”¨ë¥¼ ì¡°í•©í•˜ì—¬ ìƒˆë¡œìš´ ë³€ìˆ˜ ìƒì„±
 #
 
 head(train_2)
 
 
 ######################################
-# Ç¥ÁØÈ­ ÇÏ±â
-# casual, registered º¯¼ö¿¡ log¸¦ ÃëÇÔ ¹°·Ğ 1¾¿ ´õÇÏ°í...
-# ¿äÀÏ°ú °ü·ÃµÈ ¸ğµç º¯¼öµéÀ» Á¦°Å
+# í‘œì¤€í™” í•˜ê¸°
+# casual, registered ë³€ìˆ˜ì— logë¥¼ ì·¨í•¨ ë¬¼ë¡  1ì”© ë”í•˜ê³ ...
+# ìš”ì¼ê³¼ ê´€ë ¨ëœ ëª¨ë“  ë³€ìˆ˜ë“¤ì„ ì œê±°
 #
-# ¸ğµç º¯¼öµéÀ» z-score·Î º¯È¯
+# ëª¨ë“  ë³€ìˆ˜ë“¤ì„ z-scoreë¡œ ë³€í™˜
 # z = (x - mean)/stdev
 #
 # sd(x, na.rm = FALSE)
-# sapply( µ¥ÀÌÅÍ, sd)
-# colMeans( µ¥ÀÌÅÍ )
+# sapply( ë°ì´í„°, sd)
+# colMeans( ë°ì´í„° )
 
 
 colnames(train_2)
@@ -355,7 +355,7 @@ head(train_2)
 library("car")
 
 ######################################
-# È¸±ÍÈ¸±Í
+# íšŒê·€íšŒê·€
 
 colnames(train_2_score_join)
 lm_train = lm(casual ~ weather + weather + temp + humidity + windspeed + factor_x + h_score, data = train_2_score_join)
@@ -368,9 +368,9 @@ vif(lm_train)
 
 
 ######################################
-# È¸±Í½ÄÀ¸·Î ¿¹ÃøÇÏ±â.
+# íšŒê·€ì‹ìœ¼ë¡œ ì˜ˆì¸¡í•˜ê¸°.
 
-# train µ¥ÀÌÅÍ·Î ¸¸µç È¸±Í½ÄÀ¸·Î test µ¥ÀÌÅÍÀÇ °á°ú¸¦ ¿¹Ãø
+# train ë°ì´í„°ë¡œ ë§Œë“  íšŒê·€ì‹ìœ¼ë¡œ test ë°ì´í„°ì˜ ê²°ê³¼ë¥¼ ì˜ˆì¸¡
 # test = read.csv("test.csv", header = TRUE)
 
 head(test)
@@ -393,20 +393,20 @@ head(prediction_cbind)
 
 
 ######################################
-# ´ë¸ÁÀÇ Á¦Ãâ ÆÄÀÏ ¸¸µé±â!!!
+# ëŒ€ë§ì˜ ì œì¶œ íŒŒì¼ ë§Œë“¤ê¸°!!!
 
 write.csv(prediction_cbind, "submission.csv", row.names = FALSE)
 
 
-# Á¦Ãâ!!!
+# ì œì¶œ!!!
 
 
 
-# ±×¸®°í.. ³¡¾ø´Â ¹İº¹...
+# ê·¸ë¦¬ê³ .. ëì—†ëŠ” ë°˜ë³µ...
 
 
-# »ç½Ç °³ÀÎÀûÀ¸·Î Á¦´ë·Î ºĞ¼®À» ÇÑ´Ù¸é?
-# µÎ °³ÀÇ ¸ğµ¨À» ÇÕÄ¥ °Í.
+# ì‚¬ì‹¤ ê°œì¸ì ìœ¼ë¡œ ì œëŒ€ë¡œ ë¶„ì„ì„ í•œë‹¤ë©´?
+# ë‘ ê°œì˜ ëª¨ë¸ì„ í•©ì¹  ê²ƒ.
 # 
 # casual - number of non-registered user rentals initiated
 # registered - number of registered user rentals initiated
@@ -414,9 +414,9 @@ write.csv(prediction_cbind, "submission.csv", row.names = FALSE)
 #
 # count = casual + registered
 #
-# Áï, casual °ªÀ» ¿¹ÃøÇÏ±â À§ÇÑ ¸ğµ¨°ú registered °ªÀ» ¿¹ÃøÇÏ±â À§ÇÑ ¸ğµ¨À» µû·Î ¸¸µé¾î¼­
-# ±× °á°ú °ªÀ» ´õÇÏ¿© submission ÆÄÀÏÀ» ¸¸µé °Í.
+# ì¦‰, casual ê°’ì„ ì˜ˆì¸¡í•˜ê¸° ìœ„í•œ ëª¨ë¸ê³¼ registered ê°’ì„ ì˜ˆì¸¡í•˜ê¸° ìœ„í•œ ëª¨ë¸ì„ ë”°ë¡œ ë§Œë“¤ì–´ì„œ
+# ê·¸ ê²°ê³¼ ê°’ì„ ë”í•˜ì—¬ submission íŒŒì¼ì„ ë§Œë“¤ ê²ƒ.
 
 
-# Âü°í
+# ì°¸ê³ 
 # assign(), get()
