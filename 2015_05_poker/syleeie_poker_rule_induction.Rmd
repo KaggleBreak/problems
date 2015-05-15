@@ -1,0 +1,240 @@
+---
+title: "Kaggle_0516_PokerRuleInduction"
+author: "Sangyeol_lee"
+date: "Friday, May 15, 2015"
+output: html_document
+---
+###**Poker Rule Induction** 
+   + https://github.com/weedjy/kaggle-poker-rule 코드 참고
+   + 아까는 python이었다면 이번에는 R로 학습. 하트,스테이드,다이아,클루버를 카운트함. S1count, S2count, S3count, S4count
+   + 다음으로 각 카드의 Rank를 뺌. C12diff(절대값(C1-C2)), C23diff(절대값(C2-C3))... C51diff(절대값(C5-C1))
+
+```{r}
+#train 데이터 전처리
+setwd("C:/Users/syleeie/Dropbox/kaggle/syleeie_poker")
+train <- read.csv("train.csv", header=T)
+head(train)
+dim(train)
+str(train)
+
+train$S1count <- 0
+train$S2count <- 0
+train$S3count <- 0
+train$S4count <- 0
+train$C12diff <- 0
+train$C23diff <- 0
+train$C34diff <- 0
+train$C45diff <- 0
+train$C51diff <- 0
+
+train[train$S1==1,12] <- train[train$S1==1,12] + 1
+train[train$S2==1,12] <- train[train$S2==1,12] + 1
+train[train$S3==1,12] <- train[train$S3==1,12] + 1
+train[train$S4==1,12] <- train[train$S4==1,12] + 1
+train[train$S5==1,12] <- train[train$S5==1,12] + 1
+
+train[train$S1==2,13] <- train[train$S1==2,13] + 1
+train[train$S2==2,13] <- train[train$S2==2,13] + 1
+train[train$S3==2,13] <- train[train$S3==2,13] + 1
+train[train$S4==2,13] <- train[train$S4==2,13] + 1
+train[train$S5==2,13] <- train[train$S5==2,13] + 1
+
+train[train$S1==3,14] <- train[train$S1==3,14] + 1
+train[train$S2==3,14] <- train[train$S2==3,14] + 1
+train[train$S3==3,14] <- train[train$S3==3,14] + 1
+train[train$S4==3,14] <- train[train$S4==3,14] + 1
+train[train$S5==3,14] <- train[train$S5==3,14] + 1
+
+train[train$S1==4,15] <- train[train$S1==4,15] + 1
+train[train$S2==4,15] <- train[train$S2==4,15] + 1
+train[train$S3==4,15] <- train[train$S3==4,15] + 1
+train[train$S4==4,15] <- train[train$S4==4,15] + 1
+train[train$S5==4,15] <- train[train$S5==4,15] + 1
+
+summary(train)
+hist(train$S1count)
+hist(train$S2count)
+hist(train$S3count)
+hist(train$S4count)
+
+train2 <- train[,c("C1", "C2", "C3", "C4", "C5")]
+train3 <- t(apply(train2,1,sort))
+train$C12diff <- abs(train3[,1] - train3[,2])
+train$C23diff <- abs(train3[,2] - train3[,3])
+train$C34diff <- abs(train3[,3] - train3[,4])
+train$C45diff <- abs(train3[,4] - train3[,5])
+train$C51diff <- abs(train3[,5] - train3[,1])
+
+hist(train$C12diff)
+hist(train$C23diff)
+hist(train$C34diff)
+hist(train$C45diff)
+hist(train$C51diff)
+
+train$hand <- as.factor(train$hand)
+train$S1 <- NULL
+train$S2 <- NULL
+train$S3 <- NULL
+train$S4 <- NULL
+train$S5 <- NULL
+train$C1 <- NULL
+train$C2 <- NULL
+train$C3 <- NULL
+train$C4 <- NULL
+train$C5 <- NULL
+head(train)
+summary(train)
+
+#test 데이터 전처리
+test <- read.csv("test.csv", header=T)
+test$S1count <- 0
+test$S2count <- 0
+test$S3count <- 0
+test$S4count <- 0
+test$C12diff <- 0
+test$C23diff <- 0
+test$C34diff <- 0
+test$C45diff <- 0
+test$C51diff <- 0
+
+test[test$S1==1,12] <- test[test$S1==1,12] + 1
+test[test$S2==1,12] <- test[test$S2==1,12] + 1
+test[test$S3==1,12] <- test[test$S3==1,12] + 1
+test[test$S4==1,12] <- test[test$S4==1,12] + 1
+test[test$S5==1,12] <- test[test$S5==1,12] + 1
+
+test[test$S1==2,13] <- test[test$S1==2,13] + 1
+test[test$S2==2,13] <- test[test$S2==2,13] + 1
+test[test$S3==2,13] <- test[test$S3==2,13] + 1
+test[test$S4==2,13] <- test[test$S4==2,13] + 1
+test[test$S5==2,13] <- test[test$S5==2,13] + 1
+
+test[test$S1==3,14] <- test[test$S1==3,14] + 1
+test[test$S2==3,14] <- test[test$S2==3,14] + 1
+test[test$S3==3,14] <- test[test$S3==3,14] + 1
+test[test$S4==3,14] <- test[test$S4==3,14] + 1
+test[test$S5==3,14] <- test[test$S5==3,14] + 1
+
+test[test$S1==4,15] <- test[test$S1==4,15] + 1
+test[test$S2==4,15] <- test[test$S2==4,15] + 1
+test[test$S3==4,15] <- test[test$S3==4,15] + 1
+test[test$S4==4,15] <- test[test$S4==4,15] + 1
+test[test$S5==4,15] <- test[test$S5==4,15] + 1
+
+test2 <- test[,c("C1", "C2", "C3", "C4", "C5")]
+test3 <- t(apply(test2,1,sort))
+test$C12diff <- abs(test3[,1] - test3[,2])
+test$C23diff <- abs(test3[,2] - test3[,3])
+test$C34diff <- abs(test3[,3] - test3[,4])
+test$C45diff <- abs(test3[,4] - test3[,5])
+test$C51diff <- abs(test3[,5] - test3[,1])
+test$S1 <- NULL
+test$S2 <- NULL
+test$S3 <- NULL
+test$S4 <- NULL
+test$S5 <- NULL
+test$C1 <- NULL
+test$C2 <- NULL
+test$C3 <- NULL
+test$C4 <- NULL
+test$C5 <- NULL
+head(test)
+summary(test)
+```
+
+###**모형 생성** 
+   + Knn, SVM, 로지스틱 등등 많지만 여기서 소개하는 것은 랜덤 포레스트
+   + 아까는 python이었다면 이번에는 R로 학습. 하트,스테이드,다이아,클루버를 카운트함. S1count, S2count, S3count, S4count
+
+![그림참고](http://kawahara.ca/wp-content/uploads/randomForest.png)
+![그림참고](http://cdn-ak.f.st-hatena.com/images/fotolife/k/kazoo04/20131204/20131204173330.png)
+
+> ####**알고리즘**
+ + A random forest is a classifier that consists of many decision trees and outputs the class that is the mode of the classes output by individual trees
+ + The algorithm for inducing a random forest was developed by Leo Breiman and Adele Cutler, and Random Forests is their trademark. 
+ + The term came from random decision forests that was first proposed by Tin Kam Ho of Bell Labs in 1995. 
+ + The method combines Breiman's bagging idea and Ho's random subspace method to construct a collection of decision trees with controlled variations.
+ + Let the number of training cases be N, and the number of variables in the classifier be M. 
+ + We are told the number m of input variables to be used to determine the decision at a node of the tree; m should be much less than M. 
+ + Choose a training set for this tree by choosing N times with replacement from all N available training cases (i.e. take a bootstrap sample). Use the rest of the cases to estimate the error of the tree, by predicting their classes. 
+ + For each node of the tree, randomly choose m variables on which to base the decision at that node. Calculate the best split based on these m variables in the training set. 
+ + Each tree is fully grown and not pruned (as may be done in constructing a normal tree classifier). 
+
+```{r}
+#모형 생성
+#set.seed(2310)
+#n = nrow(train)
+#idx = sample(1:n, size=floor(7.5*n/10), replace=FALSE)
+#train_tr <- train[idx,]
+#train_te <- train[-idx,]
+library(randomForest)
+rf <- randomForest(train[,-1], train[,1], xtest=test[,-1], ntree=1600, mtry=9)
+predictions <- levels(train$hand)[rf$test$predicted]
+r <- data.frame(predictions)
+id <- 1:1000000
+id <- data.frame(id)
+r <- cbind(id, r)
+colnames(r) <- c("id", "hand")
+write.csv(r, "randomForest_1600_mtry9.csv", row.names = FALSE, col.names = TRUE)
+
+#rf <- randomForest(train_tr[,-1], train_tr[,1], xtest=train_te[,-1], ntree=1600, mtry=9)
+#rf
+#str(rf)
+#rf$predict_model1 <- rf$test$predicted
+
+#library(AUC)
+#auc(sensitivity(rf$predict_model1, as.factor(train_te$hand)))
+#plot(sensitivity(rf$predict_model1, as.factor(train_te$hand)))
+#plot(roc(rf$predict_model1, as.factor(train_te$hand)), type="S")
+#plot(roc(scsmytable_te$predict_model1, as.factor(scsmytable_te$breakaway)), add=TRUE, col="green")
+```
+
+###**추가 h2o 패키지**
+   + H2O is the open source math & machine learning engine for big data that brings distribution and parallelism to powerful algorithms while keeping the widely used languages of R and JSON as an API. 
+   + Classification and Regression with H2O Deep Learning
+   + 자세한 내용은 http://learn.h2o.ai/
+ 
+![그림참고](http://i.imgur.com/VCuFIHO.png)
+
+```{r}
+Sys.setenv(JAVA_HOME="C:/Program Files/Java/jdk1.8.0_45")
+library(h2o)
+#start an H2o cluster on local pc at with 4gs of memory and access to all cores
+localh2o <- h2o.init(ip="localhost",port=54321,startH2O=T,max_mem_size='6g',nthreads = -1)
+train<-read.csv("train.csv")
+test<-read.csv("test.csv")
+#load train_train to the h2o cluster with the name 'dat'
+
+train$S1<-factor(train$S1)
+train$S2<-factor(train$S2)
+train$S3<-factor(train$S3)
+train$S4<-factor(train$S4)
+train$S5<-factor(train$S5)
+train$hand<-factor(train$hand)
+dat_h2o <- as.h2o(localh2o,train,key='train')
+
+test$S1<-factor(test$S1)
+test$S2<-factor(test$S2)
+test$S3<-factor(test$S3)
+test$S4<-factor(test$S4)
+test$S5<-factor(test$S5)
+sol_h2o <- as.h2o(localh2o,test,key='test')
+
+model<-h2o.deeplearning(x= 1:10,
+                        classification=T,
+                        y= 11,
+                        data=dat_h2o,
+                        activation="RectifierWithDropout",
+                        hidden_dropout_ratio=c(.2,.3,.2),
+                        l1=1e-5,
+                        hidden = c(500,500,500),
+                        epochs = 100)
+
+model@model$confusion
+str(model@model)
+h2o_predicted<-h2o.predict(model,sol_h2o)
+predicted<-as.data.frame(h2o_predicted)
+sampleSubmission <- read.csv("sampleSubmission.csv")
+sampleSubmission$hand <- predicted$predict
+write.csv(sampleSubmission,'h2o.csv',row.names=F)
+```
