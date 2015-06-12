@@ -1,5 +1,11 @@
 
 #Part 1: For Beginners - Bag of Words 캐글뽀개기 6월 이상열
+##Bag of Words
+- (computer science) The collection of words from an unprocessed text without regard to grammar.
+- In computer vision, the bag-of-words model (BoW model) can be applied to image classification, by treating image features as words. In document classification, a bag of words is a sparse vector of occurrence counts of words; that is, a sparse histogram over the vocabulary. In computer vision, a bag of visual words is a vector of occurrence counts of a vocabulary of local image features.
+
+![그림참고](http://3.bp.blogspot.com/_tOOi3R89e74/TUeyueig7ZI/AAAAAAAAAJQ/QHL-VLEWook/s1600/vector_space.png)
+
 ##What is NLP?
 - NLP (Natural Language Processing) is a set of techniques for approaching text problems. This page will help you get started with loading and cleaning the IMDB movie reviews, then applying a simple Bag of Words model to get surprisingly accurate predictions of whether a review is thumbs-up or thumbs-down.
 
@@ -5864,7 +5870,7 @@
     # Use pandas to write the comma-separated output file
     output.to_csv( "data/Bag_of_Words_model.csv", index=False, quoting=3 )
 
-#Part 2: Word Vectors  캐글뽀개기 6월 이상열
+#Part 2: Word Vectors
 ##Introducing Distributed Word Vectors
 - This part of the tutorial will focus on using distributed word vectors created by the Word2Vec algorithm. (For an overview of deep learning, as well as pointers to some additional tutorials, see the "What is Deep Learning?" page).
 - Parts 2 and 3 assume more familiarity with Python than Part 1. We developed the following code on a dual-core Macbook Pro, however, we have not yet run the code successfully on Windows. If you are a Windows user and you get it working, please leave a note on how you did it in the forum! For more detail, see the "Setting Up Your System" page.
@@ -7638,3 +7644,14 @@
 
     Fitting a random forest to labeled training data...
     
+
+#Part 4: Comparing deep and non-deep learning methods
+##You may ask: Why is Bag of Words better?
+- The biggest reason is, in our tutorial, averaging the vectors and using the centroids lose the order of words, making it very similar to the concept of Bag of Words. The fact that the performance is similar (within range of standard error) makes all three methods practically equivalent.  
+ 
+##A few things to try:
+- First, training Word2Vec on a lot more text should greatly improve performance. Google's results are based on word vectors that were learned out of more than a billion-word corpus; our labeled and unlabeled training sets together are only a measly 18 million words or so. Conveniently, Word2Vec provides functions to load any pre-trained model that is output by Google's original C tool, so it's also possible to train a model in C and then import it into Python.
+- Second, in published literature, distributed word vector techniques have been shown to outperform Bag of Words models. In this paper, an algorithm called Paragraph Vector is used on the IMDB dataset to produce some of the most state-of-the-art results to date. In part, it does better than the approaches we try here because vector averaging and clustering lose the word order, whereas Paragraph Vectors preserves word order information.
+
+
+    #https://github.com/zygmuntz/classifying-text
