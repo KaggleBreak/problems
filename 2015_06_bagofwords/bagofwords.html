@@ -180,17 +180,28 @@ div#notebook {
 <h1 id="Part-1:-For-Beginners---Bag-of-Words-&#52880;&#44544;&#48960;&#44060;&#44592;-6&#50900;-&#51060;&#49345;&#50676;">Part 1: For Beginners - Bag of Words &#52880;&#44544;&#48960;&#44060;&#44592; 6&#50900; &#51060;&#49345;&#50676;<a class="anchor-link" href="#Part-1:-For-Beginners---Bag-of-Words-&#52880;&#44544;&#48960;&#44060;&#44592;-6&#50900;-&#51060;&#49345;&#50676;">&#182;</a></h1><h2 id="What-is-NLP?">What is NLP?<a class="anchor-link" href="#What-is-NLP?">&#182;</a></h2><ul>
 <li>NLP (Natural Language Processing) is a set of techniques for approaching text problems. This page will help you get started with loading and cleaning the IMDB movie reviews, then applying a simple Bag of Words model to get surprisingly accurate predictions of whether a review is thumbs-up or thumbs-down.</li>
 </ul>
+<blockquote><h3 id="Data-Set"><strong>Data Set</strong><a class="anchor-link" href="#Data-Set">&#182;</a></h3><ul>
+<li>The labeled data set consists of 50,000 IMDB movie reviews, specially selected for sentiment analysis. The sentiment of reviews is binary, meaning the IMDB rating &lt; 5 results in a sentiment score of 0, and rating &gt;=7 have a sentiment score of 1. No individual movie has more than 30 reviews. The 25,000 review labeled training set does not include any of the same movies as the 25,000 review test set. In addition, there are another 50,000 IMDB reviews provided without any rating labels.</li>
+<li>sampleSubmission: A comma-delimited sample submission file in the correct format.</li>
+<li>unlabeledTrainData.tsv : An extra training set with no labels. The tab-delimited file has a header row followed by 50,000 rows containing an id and text for each review. </li>
+<li>testData.tsv : The test set. The tab-delimited file has a header row followed by 25,000 rows containing an id and text for each review. Your task is to predict the sentiment for each one. </li>
+<li>labeledTrainData.tsv : The labeled training set. The file is tab-delimited and has a header row followed by 25,000 rows containing an id, sentiment, and text for each review.<ul>
+<li>Data Fields : id, sentiment(1:positive, 0:negative), review</li>
+</ul>
+</li>
+</ul>
+</blockquote>
 
 </div>
 </div>
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[46]:</div>
+<div class="prompt input_prompt">In&nbsp;[5]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>       
-<span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">&quot;C:/Users/syleeie/Dropbox/kaggle/bagofwords/labeledTrainData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">&quot;data/labeledTrainData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -200,7 +211,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[47]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">train</span><span class="o">.</span><span class="n">shape</span>
@@ -214,7 +225,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[47]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[8]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -229,7 +240,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="prompt input_prompt">In&nbsp;[9]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">train</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">values</span>
@@ -243,7 +254,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[48]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[9]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -258,7 +269,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[49]:</div>
+<div class="prompt input_prompt">In&nbsp;[10]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="n">train</span><span class="p">[</span><span class="s">&quot;review&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
@@ -298,7 +309,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[50]:</div>
+<div class="prompt input_prompt">In&nbsp;[11]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Import BeautifulSoup into your workspacefrom bs4 import BeautifulSoup</span>
@@ -312,7 +323,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="prompt input_prompt">In&nbsp;[12]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Initialize the BeautifulSoup object on a single movie review     </span>
@@ -326,7 +337,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[52]:</div>
+<div class="prompt input_prompt">In&nbsp;[13]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Print the raw review and then the output of get_text(), for # comparison</span>
@@ -354,7 +365,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[53]:</div>
+<div class="prompt input_prompt">In&nbsp;[14]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="n">example1</span><span class="o">.</span><span class="n">get_text</span><span class="p">()</span>
@@ -398,7 +409,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[54]:</div>
+<div class="prompt input_prompt">In&nbsp;[15]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">re</span>
@@ -428,7 +439,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[55]:</div>
+<div class="prompt input_prompt">In&nbsp;[16]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">lower_case</span> <span class="o">=</span> <span class="n">letters_only</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
@@ -441,7 +452,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[56]:</div>
+<div class="prompt input_prompt">In&nbsp;[17]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="n">lower_case</span>
@@ -468,7 +479,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[57]:</div>
+<div class="prompt input_prompt">In&nbsp;[18]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">words</span> <span class="o">=</span> <span class="n">lower_case</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>               
@@ -481,7 +492,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[58]:</div>
+<div class="prompt input_prompt">In&nbsp;[19]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">words</span>
@@ -495,7 +506,7 @@ div#notebook {
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[58]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[19]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -946,7 +957,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[5]:</div>
+<div class="prompt input_prompt">In&nbsp;[20]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">nltk</span>
@@ -968,7 +979,7 @@ div#notebook {
 </div>
 </div>
 
-<div class="output_area"><div class="prompt output_prompt">Out[5]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[20]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -997,7 +1008,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[6]:</div>
+<div class="prompt input_prompt">In&nbsp;[22]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">from</span> <span class="nn">nltk.corpus</span> <span class="kn">import</span> <span class="n">stopwords</span>
@@ -1010,7 +1021,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[59]:</div>
+<div class="prompt input_prompt">In&nbsp;[23]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Remove stop words from &quot;words&quot;</span>
@@ -1039,7 +1050,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[8]:</div>
+<div class="prompt input_prompt">In&nbsp;[24]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">def</span> <span class="nf">review_to_words</span><span class="p">(</span> <span class="n">raw_review</span> <span class="p">):</span>
@@ -1074,7 +1085,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[9]:</div>
+<div class="prompt input_prompt">In&nbsp;[25]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">clean_review</span> <span class="o">=</span> <span class="n">review_to_words</span><span class="p">(</span> <span class="n">train</span><span class="p">[</span><span class="s">&quot;review&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="p">)</span>
@@ -1102,7 +1113,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[122]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Get the number of reviews based on the dataframe column size</span>
@@ -1124,7 +1135,7 @@ div#notebook {
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[26]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="s">&quot;Cleaning and parsing the training set movie reviews...</span><span class="se">\n</span><span class="s">&quot;</span>
@@ -1322,7 +1333,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[32]:</div>
+<div class="prompt input_prompt">In&nbsp;[31]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>
@@ -6351,6 +6362,295 @@ Review 25000 of 25000
 </div>
 
 </div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[48]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">vocabDF</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="nb">zip</span><span class="p">(</span><span class="n">vocab</span><span class="p">,</span> <span class="n">dist</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s">&quot;word&quot;</span><span class="p">,</span> <span class="s">&quot;count&quot;</span><span class="p">])</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[51]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="o">%</span><span class="k">matplotlib</span> inline 
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[90]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">vocabDFsort</span> <span class="o">=</span> <span class="n">vocabDF</span><span class="o">.</span><span class="n">sort</span><span class="p">([</span><span class="s">&quot;count&quot;</span><span class="p">],</span> <span class="n">ascending</span><span class="o">=</span><span class="p">[</span><span class="bp">False</span><span class="p">])[:</span><span class="mi">10</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[91]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">vocabDFsort</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="s">&quot;word&quot;</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="s">&quot;count&quot;</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[91]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>&lt;matplotlib.axes._subplots.AxesSubplot at 0x23a44b38&gt;</pre>
+</div>
+
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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
+"
+>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
 <div class="cell border-box-sizing text_cell rendered">
 <div class="prompt input_prompt">
 </div>
@@ -6365,7 +6665,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[33]:</div>
+<div class="prompt input_prompt">In&nbsp;[102]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="s">&quot;Training the random forest...&quot;</span>
@@ -6393,7 +6693,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[34]:</div>
+<div class="prompt input_prompt">In&nbsp;[103]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">forest</span> <span class="o">=</span> <span class="n">RandomForestClassifier</span><span class="p">(</span><span class="n">n_estimators</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
@@ -6406,7 +6706,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[35]:</div>
+<div class="prompt input_prompt">In&nbsp;[104]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">forest</span> <span class="o">=</span> <span class="n">forest</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span> <span class="n">train_data_features</span><span class="p">,</span> <span class="n">train</span><span class="p">[</span><span class="s">&quot;sentiment&quot;</span><span class="p">]</span> <span class="p">)</span>
@@ -6419,10 +6719,10 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[36]:</div>
+<div class="prompt input_prompt">In&nbsp;[105]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">&quot;C:/Users/syleeie/Dropbox/kaggle/bagofwords/testData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="s">&quot;data/testData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span>
 </pre></div>
 
 </div>
@@ -6432,7 +6732,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[37]:</div>
+<div class="prompt input_prompt">In&nbsp;[106]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Verify that there are 25,000 rows and 2 columns</span>
@@ -6460,7 +6760,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[38]:</div>
+<div class="prompt input_prompt">In&nbsp;[107]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Create an empty list and append the clean reviews one by one</span>
@@ -6475,7 +6775,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[41]:</div>
+<div class="prompt input_prompt">In&nbsp;[108]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="s">&quot;Cleaning and parsing the test set movie reviews...</span><span class="se">\n</span><span class="s">&quot;</span>
@@ -6558,7 +6858,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="prompt input_prompt">In&nbsp;[109]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Get a bag of words for the test set, and convert to a numpy array</span>
@@ -6573,7 +6873,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div>
+<div class="prompt input_prompt">In&nbsp;[110]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Use the random forest to make sentiment label predictions</span>
@@ -6587,7 +6887,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="prompt input_prompt">In&nbsp;[111]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Copy the results to a pandas dataframe with an &quot;id&quot; column and</span>
@@ -6602,11 +6902,11 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[45]:</div>
+<div class="prompt input_prompt">In&nbsp;[112]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Use pandas to write the comma-separated output file</span>
-<span class="n">output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span> <span class="s">&quot;Bag_of_Words_model.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span>
+<span class="n">output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span> <span class="s">&quot;data/Bag_of_Words_model.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span>
 </pre></div>
 
 </div>
@@ -6652,14 +6952,14 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[148]:</div>
+<div class="prompt input_prompt">In&nbsp;[113]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">pandas</span> <span class="kn">as</span> <span class="nn">pd</span>
 <span class="c"># Read data from files </span>
-<span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span> <span class="s">&quot;C:/Users/syleeie/Dropbox/kaggle/bagofwords/labeledTrainData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span> 
-<span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span> <span class="s">&quot;C:/Users/syleeie/Dropbox/kaggle/bagofwords/testData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span> 
-<span class="n">unlabeled_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span> <span class="s">&quot;C:/Users/syleeie/Dropbox/kaggle/bagofwords/unlabeledTrainData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span> 
+<span class="n">train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span> <span class="s">&quot;data/labeledTrainData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span> 
+<span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span> <span class="s">&quot;data/testData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span> 
+<span class="n">unlabeled_train</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span> <span class="s">&quot;data/unlabeledTrainData.tsv&quot;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>  <span class="n">delimiter</span><span class="o">=</span><span class="s">&quot;</span><span class="se">\t</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s">&quot;utf-8&quot;</span><span class="p">)</span> 
 <span class="c"># Verify the number of reviews that were read (100,000 in total)</span>
 <span class="k">print</span> <span class="s">&quot;Read </span><span class="si">%d</span><span class="s"> labeled train reviews, </span><span class="si">%d</span><span class="s"> labeled test reviews, &quot;</span> <span class="s">&quot;and </span><span class="si">%d</span><span class="s"> unlabeled reviews</span><span class="se">\n</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="s">&quot;review&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">test</span><span class="p">[</span><span class="s">&quot;review&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="n">unlabeled_train</span><span class="p">[</span><span class="s">&quot;review&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">size</span> <span class="p">)</span>
 </pre></div>
@@ -6686,7 +6986,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[133]:</div>
+<div class="prompt input_prompt">In&nbsp;[114]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Import various modules for string cleaning</span>
@@ -6721,9 +7021,22 @@ Review 25000 of 25000
 </div>
 
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="NLTK's-punkt-tokenizer">NLTK's punkt tokenizer<a class="anchor-link" href="#NLTK's-punkt-tokenizer">&#182;</a></h2><ul>
+<li>It is not at all straightforward how to split a paragraph into sentences. There are all kinds of gotchas in natural language. English sentences can end with "?", "!", """, or ".", among other things, and spacing and capitalization are not reliable guides either. </li>
+<li>For this reason, we'll use NLTK's punkt tokenizer for sentence splitting. In order to use this, you will need to install NLTK and use nltk.download() to download the relevant training file for punkt.</li>
+</ul>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[117]:</div>
+<div class="prompt input_prompt">In&nbsp;[115]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Load the punkt tokenizer</span>
@@ -6738,7 +7051,65 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[118]:</div>
+<div class="prompt input_prompt">In&nbsp;[133]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="s">&quot;review&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())[</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[133]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>u&apos;Mr. Hines succeeds in doing so.&apos;</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[128]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">review_to_wordlist</span><span class="p">(</span><span class="n">tokenizer</span><span class="o">.</span><span class="n">tokenize</span><span class="p">(</span><span class="n">train</span><span class="p">[</span><span class="s">&quot;review&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())[</span><span class="mi">1</span><span class="p">],</span><span class="bp">False</span><span class="p">)</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[128]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>[u&apos;mr&apos;, u&apos;hines&apos;, u&apos;succeeds&apos;, u&apos;in&apos;, u&apos;doing&apos;, u&apos;so&apos;]</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[135]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Define a function to split a review into parsed sentences</span>
@@ -6770,7 +7141,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[119]:</div>
+<div class="prompt input_prompt">In&nbsp;[136]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">sentences</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c"># Initialize an empty list of sentences</span>
@@ -6783,7 +7154,7 @@ Review 25000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[120]:</div>
+<div class="prompt input_prompt">In&nbsp;[137]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="s">&quot;Parsing sentences from training set&quot;</span>
@@ -6804,9 +7175,51 @@ Review 25000 of 25000
 
 
 <div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:182: UserWarning: &quot;.&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:182: UserWarning: &quot;...&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.&apos; % markup)
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>Parsing sentences from training set
-Parsing sentences from unlabeled set
+Parsing sentences from unlabeled set</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stderr output_text">
+<pre>C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:189: UserWarning: &quot;http://www.happierabroad.com&quot;&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:189: UserWarning: &quot;http://www.archive.org/details/LovefromaStranger&quot;&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:189: UserWarning: &quot;http://www.loosechangeguide.com/LooseChangeGuide.html&quot;&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:182: UserWarning: &quot;... ...&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:182: UserWarning: &quot;....&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:189: UserWarning: &quot;http://www.msnbc.msn.com/id/4972055/site/newsweek/&quot;&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:182: UserWarning: &quot;..&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:189: UserWarning: &quot;http://www.youtube.com/watch?v=a0KSqelmgN8&quot;&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:182: UserWarning: &quot;.. .&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a filename, not markup. You should probably open this file and pass the filehandle into Beautiful Soup.&apos; % markup)
+C:\Users\syleeie\AppData\Local\Continuum\Anaconda\lib\site-packages\bs4\__init__.py:189: UserWarning: &quot;http://jake-weird.blogspot.com/2007/08/beneath.html&quot;&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.
+  &apos;&quot;%s&quot; looks like a URL. Beautiful Soup is not an HTTP client. You should probably use an HTTP client to get the document behind the URL, and feed that document to Beautiful Soup.&apos; % markup)
+</pre>
+</div>
+</div>
+
+<div class="output_area"><div class="prompt"></div>
+<div class="output_subarea output_stream output_stdout output_text">
+<pre>
 </pre>
 </div>
 </div>
@@ -6817,7 +7230,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[42]:</div>
+<div class="prompt input_prompt">In&nbsp;[138]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="nb">len</span><span class="p">(</span><span class="n">sentences</span><span class="p">)</span>
@@ -6833,7 +7246,7 @@ Parsing sentences from unlabeled set
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>940785
+<pre>795538
 </pre>
 </div>
 </div>
@@ -6844,7 +7257,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[43]:</div>
+<div class="prompt input_prompt">In&nbsp;[139]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="n">sentences</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -6871,7 +7284,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[44]:</div>
+<div class="prompt input_prompt">In&nbsp;[140]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">print</span> <span class="n">sentences</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
@@ -6917,9 +7330,22 @@ Parsing sentences from unlabeled set
 </div>
 </div>
 </div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="prompt input_prompt">
+</div>
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="CBOW,-Skip-gram">CBOW, Skip-gram<a class="anchor-link" href="#CBOW,-Skip-gram">&#182;</a></h2><p><img src="http://www.lucypark.kr/courses/2015-ba/images/cbow-skip.png" alt="그림참고"></p>
+<ul>
+<li>출처 : <a href="http://www.lucypark.kr/courses/2015-ba/text-mining.html">http://www.lucypark.kr/courses/2015-ba/text-mining.html</a></li>
+</ul>
+
+</div>
+</div>
+</div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[71]:</div>
+<div class="prompt input_prompt">In&nbsp;[141]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">from</span> <span class="nn">gensim.models</span> <span class="kn">import</span> <span class="n">word2vec</span>
@@ -6935,7 +7361,7 @@ Parsing sentences from unlabeled set
 <span class="c"># If you don&#39;t plan to train the model any further, calling # init_sims will make the model much more memory-efficient.</span>
 <span class="n">model</span><span class="o">.</span><span class="n">init_sims</span><span class="p">(</span><span class="n">replace</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 <span class="c"># It can be helpful to create a meaningful model name and # save the model for later use. You can load it later using Word2Vec.load()</span>
-<span class="n">model_name</span> <span class="o">=</span> <span class="s">&quot;300features_40minwords_10context&quot;</span>
+<span class="n">model_name</span> <span class="o">=</span> <span class="s">&quot;data/300features_40minwords_10context&quot;</span>
 <span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">model_name</span><span class="p">)</span>
 </pre></div>
 
@@ -6973,7 +7399,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[72]:</div>
+<div class="prompt input_prompt">In&nbsp;[142]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">model</span><span class="o">.</span><span class="n">doesnt_match</span><span class="p">(</span><span class="s">&quot;man woman child kitchen&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
@@ -6987,7 +7413,7 @@ Parsing sentences from unlabeled set
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[72]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[142]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -7002,7 +7428,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[73]:</div>
+<div class="prompt input_prompt">In&nbsp;[143]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">model</span><span class="o">.</span><span class="n">doesnt_match</span><span class="p">(</span><span class="s">&quot;france england germany berlin&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">())</span>
@@ -7016,7 +7442,7 @@ Parsing sentences from unlabeled set
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[73]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[143]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -7098,10 +7524,10 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[76]:</div>
+<div class="prompt input_prompt">In&nbsp;[145]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">model</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="s">&quot;man&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">model</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="s">&quot;movie&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -7112,20 +7538,20 @@ Parsing sentences from unlabeled set
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[76]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[145]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[(u&apos;woman&apos;, 0.6406450271606445),
- (u&apos;guy&apos;, 0.5228706002235413),
- (u&apos;person&apos;, 0.5041045546531677),
- (u&apos;lady&apos;, 0.496663361787796),
- (u&apos;boy&apos;, 0.49204936623573303),
- (u&apos;men&apos;, 0.4729120135307312),
- (u&apos;girl&apos;, 0.4655877649784088),
- (u&apos;himself&apos;, 0.4350915253162384),
- (u&apos;son&apos;, 0.42675942182540894),
- (u&apos;he&apos;, 0.4085276126861572)]</pre>
+<pre>[(u&apos;film&apos;, 0.7634966373443604),
+ (u&apos;flick&apos;, 0.5223912000656128),
+ (u&apos;it&apos;, 0.48672276735305786),
+ (u&apos;movies&apos;, 0.47852498292922974),
+ (u&apos;show&apos;, 0.40239569544792175),
+ (u&apos;picture&apos;, 0.40122300386428833),
+ (u&apos;really&apos;, 0.37799549102783203),
+ (u&apos;films&apos;, 0.3635694682598114),
+ (u&apos;actually&apos;, 0.36350029706954956),
+ (u&apos;thing&apos;, 0.35694169998168945)]</pre>
 </div>
 
 </div>
@@ -7136,7 +7562,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[77]:</div>
+<div class="prompt input_prompt">In&nbsp;[150]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">model</span><span class="o">.</span><span class="n">most_similar</span><span class="p">(</span><span class="s">&quot;awful&quot;</span><span class="p">)</span>
@@ -7150,20 +7576,20 @@ Parsing sentences from unlabeled set
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[77]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[150]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>[(u&apos;terrible&apos;, 0.6672066450119019),
- (u&apos;horrible&apos;, 0.6260309815406799),
- (u&apos;dreadful&apos;, 0.6042028069496155),
- (u&apos;atrocious&apos;, 0.584919273853302),
- (u&apos;horrendous&apos;, 0.5667328834533691),
- (u&apos;abysmal&apos;, 0.5206479430198669),
- (u&apos;laughable&apos;, 0.5199311375617981),
- (u&apos;lousy&apos;, 0.5181010961532593),
- (u&apos;ridiculous&apos;, 0.5069169402122498),
- (u&apos;amateurish&apos;, 0.47986993193626404)]</pre>
+<pre>[(u&apos;terrible&apos;, 0.6525179743766785),
+ (u&apos;horrible&apos;, 0.6311472058296204),
+ (u&apos;atrocious&apos;, 0.5735800862312317),
+ (u&apos;dreadful&apos;, 0.5634967088699341),
+ (u&apos;horrendous&apos;, 0.5387319922447205),
+ (u&apos;appalling&apos;, 0.5386931300163269),
+ (u&apos;amateurish&apos;, 0.5320806503295898),
+ (u&apos;abysmal&apos;, 0.5210109353065491),
+ (u&apos;laughable&apos;, 0.5158694982528687),
+ (u&apos;lame&apos;, 0.49704161286354065)]</pre>
 </div>
 
 </div>
@@ -7186,10 +7612,10 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[79]:</div>
+<div class="prompt input_prompt">In&nbsp;[151]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython2"><pre><span class="n">model</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">Word2Vec</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;300features_40minwords_10context&quot;</span><span class="p">)</span>
+<div class=" highlight hl-ipython2"><pre><span class="n">model</span> <span class="o">=</span> <span class="n">word2vec</span><span class="o">.</span><span class="n">Word2Vec</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s">&quot;data/300features_40minwords_10context&quot;</span><span class="p">)</span>
 </pre></div>
 
 </div>
@@ -7199,7 +7625,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[80]:</div>
+<div class="prompt input_prompt">In&nbsp;[152]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="nb">type</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">syn0</span><span class="p">)</span>
@@ -7213,7 +7639,7 @@ Parsing sentences from unlabeled set
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[80]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[152]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
@@ -7228,7 +7654,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[82]:</div>
+<div class="prompt input_prompt">In&nbsp;[153]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">model</span><span class="o">.</span><span class="n">syn0</span><span class="o">.</span><span class="n">shape</span>
@@ -7242,11 +7668,11 @@ Parsing sentences from unlabeled set
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[82]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[153]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>(18156L, 300L)</pre>
+<pre>(16490L, 300L)</pre>
 </div>
 
 </div>
@@ -7257,7 +7683,48 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[86]:</div>
+<div class="prompt input_prompt">In&nbsp;[164]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">model</span><span class="o">.</span><span class="n">syn0</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[164]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>array([[ 0.04272597,  0.02228181, -0.02533046, ..., -0.08800039,
+         0.06602161, -0.04718359],
+       [ 0.05393913,  0.09718307,  0.06677321, ..., -0.01875978,
+         0.08125877, -0.05018139],
+       [ 0.12490977, -0.01842123, -0.03390983, ..., -0.00638508,
+         0.11072401, -0.01249497],
+       ..., 
+       [ 0.07046581,  0.07089774,  0.02245995, ...,  0.0718458 ,
+        -0.09628788,  0.06950014],
+       [ 0.11556647,  0.05887836,  0.03581823, ...,  0.04823473,
+         0.0032109 , -0.01330985],
+       [ 0.06365275,  0.00861849, -0.03977529, ...,  0.07484198,
+        -0.10121081,  0.03656519]], dtype=float32)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[166]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">model</span><span class="p">[</span><span class="s">&quot;flower&quot;</span><span class="p">]</span>
@@ -7271,110 +7738,70 @@ Parsing sentences from unlabeled set
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[86]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[166]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([ -9.58045106e-03,   7.04566985e-02,   1.29595688e-02,
-         1.11131839e-01,   6.71411008e-02,   4.38962914e-02,
-         5.49863018e-02,  -4.05125953e-02,   2.39351001e-02,
-         6.60036281e-02,  -1.07349098e-01,   1.63668189e-02,
-        -1.23499356e-01,   4.89749340e-03,   2.62659299e-03,
-         2.10340344e-03,   4.95026894e-02,   2.44540498e-02,
-        -4.62624133e-02,  -8.00017938e-02,  -3.95857394e-02,
-         7.79307857e-02,   1.94164913e-03,   4.83090766e-02,
-         8.74571204e-02,  -5.10822609e-02,   6.09014519e-02,
-        -1.11750159e-02,   4.49205041e-02,   5.20069711e-02,
-        -6.96745738e-02,   6.19798377e-02,  -8.11199695e-02,
-        -1.34997582e-02,  -4.78713177e-02,   5.44762947e-02,
-         6.96558058e-02,  -1.12576149e-02,   9.88208428e-02,
-        -1.26596123e-01,   8.03007856e-02,  -2.80989148e-02,
-        -8.52644742e-02,  -1.57927811e-01,   8.91710073e-02,
-        -7.46686012e-02,  -8.46754983e-02,  -7.01689944e-02,
-        -1.55053735e-02,  -7.69708976e-02,  -7.29481280e-02,
-        -2.67049822e-04,   3.88678461e-02,   4.62967204e-03,
-         4.43349332e-02,  -9.13482755e-02,   8.91013071e-02,
-         1.77590504e-01,  -1.02670928e-02,   6.76860213e-02,
-         5.67565784e-02,   2.90134773e-02,   5.43119870e-02,
-         2.75932122e-02,   3.47036682e-02,   2.09427066e-02,
-        -2.06597801e-02,   2.08117999e-02,   3.53373066e-02,
-         2.60423478e-02,  -2.68880781e-02,   9.81826410e-02,
-        -5.43897087e-03,   2.74423603e-02,  -2.14666743e-02,
-        -2.50560679e-02,  -6.59982190e-02,   3.41505520e-02,
-         6.85659796e-03,   3.44814570e-03,   3.84475142e-02,
-        -7.51579925e-03,  -9.88967996e-03,  -8.50959495e-03,
-        -8.01483467e-02,  -2.96659209e-03,  -4.68908735e-02,
-        -6.20224811e-02,   1.71722658e-03,  -4.34655175e-02,
-        -9.57102850e-02,   1.75838713e-02,   3.45387161e-02,
-         1.19498096e-01,   1.21569186e-01,  -2.99640168e-02,
-         2.62021087e-04,  -5.14637306e-02,   1.16424516e-01,
-         5.37066869e-02,   3.27980220e-02,   8.11991394e-02,
-        -1.16274551e-01,  -1.38947173e-04,  -9.13407728e-02,
-         8.95739868e-02,   2.72008963e-02,   4.62414995e-02,
-         3.84692624e-02,  -1.46913216e-01,  -3.71104665e-02,
-         1.27881780e-01,   2.67437864e-02,   1.28867611e-01,
-         5.61148347e-03,   3.71756003e-04,   4.15792838e-02,
-        -2.14552619e-02,   1.64145250e-02,   7.52495080e-02,
-         3.91896367e-02,   1.14163123e-01,   2.90845670e-02,
-         1.00370407e-01,   7.37507641e-02,  -8.60402212e-02,
-        -2.29427367e-02,  -5.52513301e-02,   1.26907006e-01,
-        -8.98267701e-02,   8.22091624e-02,   5.88233098e-02,
-         8.89514294e-03,   6.27020225e-02,  -3.57308276e-02,
-         3.17439772e-02,   3.34739946e-02,  -3.00867278e-02,
-         2.18413789e-02,  -9.48416516e-02,   7.30132312e-02,
-        -1.34455906e-02,  -1.62106578e-03,   2.73858104e-02,
-        -3.01319566e-02,   3.58206290e-03,   5.15633337e-02,
-         2.21673660e-02,   2.81695630e-02,   1.21041546e-02,
-         2.63445871e-03,  -3.53735243e-03,  -2.22311560e-02,
-        -1.26026019e-01,  -4.68143336e-02,   1.03282511e-01,
-        -2.37416918e-03,  -5.37691684e-03,  -9.19621531e-03,
-         8.09310600e-02,   2.01996509e-02,  -6.24374487e-02,
-         2.74873041e-02,  -2.79928534e-03,  -7.71967089e-03,
-        -4.07071635e-02,   7.42080808e-02,   1.14481561e-01,
-         3.96314263e-02,  -7.72112329e-03,   3.53648029e-02,
-        -3.83484773e-02,  -2.82040164e-02,  -1.10690653e-01,
-         6.69937581e-02,   8.94688442e-02,   3.81039418e-02,
-        -3.09643280e-02,  -7.39908814e-02,   5.51993799e-05,
-        -1.76264495e-02,   1.18586473e-01,   2.40855217e-02,
-        -5.71027398e-02,   9.65365618e-02,   7.61943811e-04,
-         1.07121924e-02,  -1.22389635e-02,  -2.66774744e-02,
-        -1.25995260e-02,  -3.11141051e-02,  -1.63812824e-02,
-         5.35460971e-02,   5.97335696e-02,   9.27224159e-02,
-        -4.55172956e-02,   4.91667539e-02,   4.11463194e-02,
-        -8.37391391e-02,  -2.02853810e-02,   1.99595038e-02,
-         2.73285899e-02,  -1.24143831e-01,  -4.18540202e-02,
-         2.08803024e-02,   2.48420537e-02,  -2.56576817e-02,
-        -1.03830276e-02,   2.15352289e-02,  -6.92990050e-02,
-         3.92704159e-02,  -1.52038718e-02,  -3.04527394e-02,
-        -4.99573424e-02,   1.31296730e-02,  -6.71346020e-03,
-         1.24517726e-02,   4.99238668e-04,   6.69116750e-02,
-        -7.91911483e-02,  -2.10861675e-02,  -2.64193229e-02,
-        -6.87456131e-02,   5.01333922e-02,   3.06853484e-02,
-        -7.69346505e-02,  -1.56957824e-02,  -1.25045612e-01,
-         1.89513136e-02,   4.67133634e-02,  -1.68321971e-02,
-         4.00562473e-02,  -4.41956148e-03,  -5.90680353e-02,
-        -3.98426130e-02,  -4.06711474e-02,   1.49102397e-02,
-        -4.75268103e-02,  -1.40401181e-02,   2.05039587e-02,
-         1.09792829e-01,  -3.71862855e-03,   2.54751425e-02,
-         2.17902362e-02,   1.87615808e-02,  -2.99954936e-02,
-        -6.21576943e-02,   9.04492363e-02,   1.09678909e-01,
-        -1.11031020e-02,  -3.23078819e-02,  -4.70410585e-02,
-        -6.89160004e-02,   8.63014236e-02,   3.67885418e-02,
-         1.80600323e-02,  -3.54859568e-02,  -1.10180944e-03,
-        -6.38311505e-02,  -4.62585166e-02,  -3.96716706e-02,
-         5.56900026e-03,   9.41954851e-02,   1.15661271e-01,
-         8.35835338e-02,   9.61628556e-02,  -1.41217997e-02,
-        -2.06976105e-02,  -2.89071091e-02,   9.19149444e-03,
-        -1.06176073e-02,  -4.61415714e-03,   1.98365040e-02,
-        -2.81452872e-02,  -3.58280912e-02,   3.67420726e-02,
-         3.11851893e-02,   2.05313321e-02,   3.27152479e-03,
-         1.22356573e-02,  -4.77880687e-02,  -1.64383219e-03,
-        -3.98566946e-03,   3.07165273e-02,  -1.82594545e-02,
-         7.62495697e-02,   1.04925111e-02,   2.78251171e-02,
-        -6.94317184e-03,  -3.44882011e-02,   4.29367125e-02,
-        -3.11174449e-02,  -4.52890433e-02,  -1.87816918e-02,
-         1.15327109e-02,  -7.32270256e-02,  -1.33966962e-02,
-         4.04125452e-03,   1.29627502e-02,   1.38802439e-01], dtype=float32)</pre>
+<pre>array([ 0.04042398,  0.0186398 ,  0.04720068,  0.03186895,  0.01779919,
+       -0.01622956, -0.02686793, -0.01730623,  0.04837634,  0.01107381,
+        0.02536205,  0.01677513,  0.05563941,  0.07396376,  0.04739685,
+        0.0464455 , -0.01258009, -0.14188847, -0.09689654, -0.15137376,
+       -0.02867739, -0.00961016, -0.02752398,  0.02627956, -0.00297707,
+        0.02433829,  0.08619428, -0.03515118, -0.00074092,  0.00206377,
+       -0.02281866,  0.0119339 , -0.05274351, -0.01075293,  0.03356041,
+        0.03510628, -0.02899991, -0.02232411, -0.00663786, -0.19681655,
+        0.13078725, -0.08202054,  0.07947368, -0.01669291, -0.06263275,
+       -0.08269754,  0.00163373,  0.07083065,  0.04346083,  0.00763198,
+       -0.0220907 , -0.04779875,  0.09357822, -0.08167551,  0.0024251 ,
+       -0.03383121,  0.15247208, -0.02730003, -0.07606755,  0.03364411,
+       -0.1067204 , -0.09866589, -0.06243056, -0.0276482 ,  0.00569376,
+        0.02357883, -0.07928322,  0.1022463 ,  0.09310723, -0.10918699,
+       -0.05735256,  0.08773503,  0.07396004, -0.0992709 ,  0.00261532,
+       -0.00695493, -0.0889953 , -0.03293015,  0.09274381, -0.03605521,
+       -0.08381233,  0.1045758 ,  0.06272779,  0.05645932, -0.03681621,
+        0.00836369, -0.05573614, -0.11487319, -0.02978988, -0.00044689,
+        0.02700666, -0.04609343,  0.06696158, -0.04651136,  0.02869786,
+       -0.12766717,  0.02298233,  0.07623962, -0.00571641,  0.07082768,
+       -0.00792123, -0.01256036, -0.04010174,  0.00226585,  0.00463587,
+       -0.03459169, -0.01512074,  0.07196523, -0.0611032 , -0.05407621,
+        0.0552209 ,  0.05591853, -0.02540358, -0.02308204, -0.05257574,
+        0.00079058,  0.07522674,  0.00853768,  0.03034609,  0.05919341,
+       -0.01825782, -0.01429208, -0.04528198, -0.0200852 ,  0.04239943,
+       -0.05641997, -0.01866578,  0.10737176,  0.00973112,  0.08168048,
+        0.02840335, -0.04979379, -0.03876301,  0.04717286,  0.10597441,
+        0.1156605 , -0.01041227,  0.02274153, -0.04801643, -0.01305608,
+        0.0505072 ,  0.02121431,  0.02337711, -0.00409066,  0.09362634,
+        0.04750353, -0.00372692, -0.00128898, -0.04180481,  0.03382327,
+       -0.03833931,  0.08733334, -0.00241893, -0.07668862,  0.03663802,
+       -0.0322515 , -0.07128011, -0.06468596, -0.00620926,  0.01217283,
+       -0.13717134,  0.03394367, -0.02823212, -0.08768983,  0.04723614,
+       -0.0138685 ,  0.1459114 , -0.00358411, -0.05541382,  0.05135057,
+        0.07914142,  0.03591038, -0.04225782, -0.02129469,  0.00089369,
+        0.01809667, -0.0543768 ,  0.025955  ,  0.04042456,  0.01476096,
+        0.01902533, -0.00609416, -0.10308517, -0.01072097, -0.02373515,
+        0.02032685, -0.00971982,  0.02355824,  0.03576139, -0.009965  ,
+        0.05062064, -0.00175027, -0.04115308,  0.08176361, -0.00778245,
+        0.04128931, -0.04364806, -0.06507017,  0.03545479,  0.06439774,
+        0.00845267, -0.00318366, -0.12002674,  0.01396131,  0.07879787,
+       -0.00263252, -0.00621511,  0.02067295, -0.020343  ,  0.04101465,
+       -0.05414777, -0.10104685, -0.06327926, -0.05019981,  0.06277156,
+       -0.0346878 ,  0.05667479, -0.02943307,  0.01552766, -0.04776048,
+       -0.01977421, -0.0067522 ,  0.05272618,  0.08082524, -0.00852098,
+       -0.01778445,  0.04418441, -0.01090601,  0.01725299, -0.03187133,
+       -0.08597074,  0.09016886,  0.10860357, -0.06439008,  0.10892945,
+       -0.05663741, -0.07533863, -0.17701662,  0.04771404,  0.00757867,
+        0.13162985, -0.07436577,  0.0458664 , -0.01970553, -0.03297826,
+        0.09047492,  0.03983783,  0.01153056,  0.00391284,  0.02640122,
+        0.03452963, -0.01545394, -0.02846777, -0.08534002,  0.05890543,
+       -0.03587215, -0.11013801,  0.04348291,  0.01165843,  0.02149132,
+       -0.04891241, -0.04364199, -0.02802602,  0.01800054, -0.08956381,
+       -0.08322865,  0.08813229, -0.00780835,  0.02401639, -0.0305723 ,
+       -0.06751081,  0.00616821,  0.02743997,  0.08021714, -0.05090074,
+       -0.07745761, -0.09033971, -0.06178989,  0.00963465, -0.06815664,
+       -0.00322019,  0.06116679, -0.01651315,  0.0795252 , -0.02109743,
+        0.03078521, -0.02398927,  0.0094525 , -0.07074674, -0.03801485,
+       -0.03284042, -0.04521797, -0.00057617,  0.04689799, -0.0310311 ,
+        0.05744852, -0.00567846,  0.0592916 ,  0.00217587,  0.07412611], dtype=float32)</pre>
 </div>
 
 </div>
@@ -7398,7 +7825,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[147]:</div>
+<div class="prompt input_prompt">In&nbsp;[167]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">import</span> <span class="nn">numpy</span> <span class="kn">as</span> <span class="nn">np</span>  
@@ -7459,7 +7886,7 @@ Parsing sentences from unlabeled set
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[149]:</div>
+<div class="prompt input_prompt">In&nbsp;[168]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># ****************************************************************</span>
@@ -7550,7 +7977,7 @@ Review 24000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[150]:</div>
+<div class="prompt input_prompt">In&nbsp;[173]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">trainDataVecs</span>
@@ -7564,23 +7991,23 @@ Review 24000 of 25000
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[150]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[173]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[  2.81044166e-03,   1.45690506e-02,   2.97358842e-03, ...,
-          1.73294768e-02,   1.18184630e-02,  -2.22764928e-02],
-       [  1.41210239e-02,  -9.61203594e-04,  -1.49436211e-02, ...,
-          3.93144460e-03,  -1.49351060e-02,  -8.09406117e-03],
-       [  3.08833271e-02,   1.92688853e-02,  -1.29003981e-02, ...,
-          7.69168430e-04,   2.24455539e-03,  -1.52144199e-02],
+<pre>array([[ 0.00772784,  0.01348568,  0.01548757, ..., -0.02727521,
+         0.0331202 ,  0.00250568],
+       [ 0.02766393, -0.00218276,  0.00720501, ..., -0.01928846,
+         0.02187451, -0.00071847],
+       [ 0.02698607,  0.04589032, -0.00027728, ..., -0.00290324,
+         0.02098387, -0.01705219],
        ..., 
-       [ -5.37258945e-03,   7.72044016e-03,  -2.90242178e-06, ...,
-          9.80764255e-03,   3.02238837e-02,  -3.25739309e-02],
-       [  1.44943791e-02,  -5.26435615e-04,  -9.56286676e-04, ...,
-          2.24158168e-02,  -1.21617215e-02,  -2.89049577e-02],
-       [ -2.48553976e-03,   6.18491275e-03,  -1.07635488e-03, ...,
-          2.88001001e-02,  -7.36161834e-03,  -2.04818249e-02]], dtype=float32)</pre>
+       [ 0.00041063, -0.00085632,  0.01996238, ..., -0.02406841,
+         0.03849193,  0.01320355],
+       [-0.02639985,  0.00126993,  0.0206499 , ...,  0.00067222,
+         0.01540311,  0.00752096],
+       [-0.01273224, -0.00362111,  0.01922369, ..., -0.02579948,
+         0.01801893, -0.00162729]], dtype=float32)</pre>
 </div>
 
 </div>
@@ -7591,7 +8018,7 @@ Review 24000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[151]:</div>
+<div class="prompt input_prompt">In&nbsp;[174]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">testDataVecs</span>
@@ -7605,23 +8032,23 @@ Review 24000 of 25000
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[151]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[174]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([[-0.00056844, -0.00664407, -0.00375575, ...,  0.04472053,
-        -0.00653771, -0.01536133],
-       [ 0.0109499 ,  0.01673462,  0.01273081, ...,  0.00970849,
-         0.00981874, -0.01589606],
-       [-0.01475761, -0.00172875,  0.0090673 , ...,  0.02380164,
-         0.00074859, -0.02273194],
+<pre>array([[ 0.00697642,  0.02257779,  0.0189149 , ..., -0.00351161,
+        -0.00871762,  0.01503904],
+       [-0.00597948,  0.00581781,  0.02015768, ..., -0.04882504,
+         0.01419543,  0.00031663],
+       [ 0.00523906,  0.00714156,  0.01252571, ..., -0.02493174,
+         0.01828998,  0.0103854 ],
        ..., 
-       [ 0.01039688,  0.00545836, -0.00744576, ...,  0.0328642 ,
-         0.00448979, -0.01595946],
-       [ 0.02887705,  0.01264403,  0.00012853, ...,  0.02721696,
-         0.00305164, -0.00187562],
-       [ 0.02115914,  0.01160519, -0.00082652, ...,  0.0311221 ,
-         0.01019893, -0.01209128]], dtype=float32)</pre>
+       [ 0.01200398, -0.01339126, -0.00536374, ..., -0.01166813,
+         0.01015216,  0.00784044],
+       [ 0.02244364,  0.02381871, -0.00812313, ...,  0.00019445,
+         0.00890972,  0.01137791],
+       [ 0.0126587 ,  0.00504724,  0.01124002, ..., -0.03560906,
+         0.02480544, -0.00447775]], dtype=float32)</pre>
 </div>
 
 </div>
@@ -7632,7 +8059,7 @@ Review 24000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[152]:</div>
+<div class="prompt input_prompt">In&nbsp;[175]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Fit a random forest to the training data, using 100 trees</span>
@@ -7645,7 +8072,7 @@ Review 24000 of 25000
 <span class="n">result</span> <span class="o">=</span> <span class="n">forest</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span> <span class="n">testDataVecs</span> <span class="p">)</span>
 <span class="c"># Write the test results </span>
 <span class="n">output</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span> <span class="n">data</span><span class="o">=</span><span class="p">{</span><span class="s">&quot;id&quot;</span><span class="p">:</span><span class="n">test</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">],</span> <span class="s">&quot;sentiment&quot;</span><span class="p">:</span><span class="n">result</span><span class="p">}</span> <span class="p">)</span>
-<span class="n">output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span> <span class="s">&quot;Word2Vec_AverageVectors.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span>
+<span class="n">output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span> <span class="s">&quot;data/Word2Vec_AverageVectors.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span>
 </pre></div>
 
 </div>
@@ -7696,7 +8123,37 @@ Review 24000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[153]:</div>
+<div class="prompt input_prompt">In&nbsp;[180]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">word_vectors</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">syn0</span>
+<span class="n">word_vectors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">/</span> <span class="mi">5</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[180]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>3298L</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[181]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="kn">from</span> <span class="nn">sklearn.cluster</span> <span class="kn">import</span> <span class="n">KMeans</span>
@@ -7727,7 +8184,7 @@ Review 24000 of 25000
 
 <div class="output_area"><div class="prompt"></div>
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>Time taken for K Means clustering:  956.663000107 seconds.
+<pre>Time taken for K Means clustering:  605.296999931 seconds.
 </pre>
 </div>
 </div>
@@ -7738,7 +8195,7 @@ Review 24000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[160]:</div>
+<div class="prompt input_prompt">In&nbsp;[182]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">idx</span>
@@ -7752,11 +8209,11 @@ Review 24000 of 25000
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[160]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[182]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>array([2010,  983, 1108, ..., 1493,  628, 2648])</pre>
+<pre>array([3207, 1416, 1110, ...,  466, 1527, 1733])</pre>
 </div>
 
 </div>
@@ -7767,7 +8224,7 @@ Review 24000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[155]:</div>
+<div class="prompt input_prompt">In&nbsp;[183]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Create a Word / Index dictionary, mapping each vocabulary word to</span>
@@ -7782,7 +8239,7 @@ Review 24000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[161]:</div>
+<div class="prompt input_prompt">In&nbsp;[184]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="n">word_centroid_map</span>
@@ -7796,1010 +8253,1010 @@ Review 24000 of 25000
 <div class="output">
 
 
-<div class="output_area"><div class="prompt output_prompt">Out[161]:</div>
+<div class="output_area"><div class="prompt output_prompt">Out[184]:</div>
 
 
 <div class="output_text output_subarea output_execute_result">
-<pre>{u&apos;raining&apos;: 378,
- u&apos;writings&apos;: 887,
- u&apos;hordes&apos;: 2134,
- u&apos;galactica&apos;: 1604,
- u&apos;foul&apos;: 1871,
- u&apos;four&apos;: 568,
- u&apos;prices&apos;: 947,
- u&apos;woods&apos;: 2010,
- u&apos;spiders&apos;: 983,
- u&apos;hanging&apos;: 1108,
- u&apos;woody&apos;: 912,
- u&apos;gabriella&apos;: 2572,
- u&apos;comically&apos;: 545,
- u&apos;gabrielle&apos;: 3465,
- u&apos;marching&apos;: 51,
- u&apos;looking&apos;: 1890,
- u&apos;advantage&apos;: 2069,
- u&apos;electricity&apos;: 2044,
- u&apos;aileen&apos;: 910,
- u&apos;objection&apos;: 3616,
- u&apos;unanswered&apos;: 2920,
- u&apos;originality&apos;: 1216,
- u&apos;fingernails&apos;: 1252,
- u&apos;wholeheartedly&apos;: 346,
- u&apos;lori&apos;: 3273,
- u&apos;rickman&apos;: 3042,
- u&apos;lord&apos;: 2764,
- u&apos;immature&apos;: 1737,
- u&apos;meadows&apos;: 1690,
- u&apos;shaving&apos;: 497,
- u&apos;sinking&apos;: 1439,
- u&apos;delpy&apos;: 2302,
- u&apos;awarded&apos;: 2502,
- u&apos;stallone&apos;: 353,
- u&apos;brundle&apos;: 2194,
- u&apos;regional&apos;: 2012,
- u&apos;montage&apos;: 247,
- u&apos;trojan&apos;: 631,
- u&apos;replaces&apos;: 3122,
- u&apos;yellow&apos;: 100,
- u&apos;taj&apos;: 621,
- u&apos;fur&apos;: 304,
- u&apos;stabbed&apos;: 1122,
- u&apos;screaming&apos;: 1339,
- u&apos;bourne&apos;: 1446,
- u&apos;disturb&apos;: 1996,
- u&apos;basics&apos;: 2105,
- u&apos;uttering&apos;: 664,
- u&apos;grueling&apos;: 2593,
- u&apos;wooden&apos;: 2605,
- u&apos;commenter&apos;: 2009,
- u&apos;voyeur&apos;: 1262,
- u&apos;wednesday&apos;: 119,
- u&apos;viable&apos;: 3449,
- u&apos;solid&apos;: 162,
- u&apos;brutish&apos;: 2176,
- u&apos;crotch&apos;: 235,
- u&apos;succession&apos;: 1933,
- u&apos;stereotypical&apos;: 1760,
- u&apos;commented&apos;: 2009,
- u&apos;asian&apos;: 1407,
- u&apos;pumbaa&apos;: 1788,
- u&apos;merlin&apos;: 3483,
- u&apos;trump&apos;: 874,
- u&apos;specially&apos;: 3304,
- u&apos;nigh&apos;: 3501,
- u&apos;tired&apos;: 1689,
- u&apos;miller&apos;: 503,
- u&apos;bacon&apos;: 331,
- u&apos;frederick&apos;: 204,
- u&apos;pulse&apos;: 1254,
- u&apos;elections&apos;: 940,
- u&apos;tires&apos;: 607,
- u&apos;bannister&apos;: 1061,
- u&apos;second&apos;: 456,
- u&apos;valiant&apos;: 95,
- u&apos;currie&apos;: 1195,
- u&apos;distinctly&apos;: 1650,
- u&apos;sterile&apos;: 1246,
- u&apos;loathing&apos;: 1785,
- u&apos;mason&apos;: 226,
- u&apos;quite&apos;: 103,
- u&apos;inanimate&apos;: 327,
- u&apos;blouse&apos;: 1064,
- u&apos;hilariously&apos;: 32,
- u&apos;errors&apos;: 2164,
- u&apos;dialogs&apos;: 1970,
- u&apos;roddy&apos;: 3201,
- u&apos;ruthless&apos;: 1274,
- u&apos;thunder&apos;: 959,
- u&apos;boogie&apos;: 1368,
- u&apos;contributed&apos;: 1867,
- u&apos;fingers&apos;: 1252,
- u&apos;kent&apos;: 1130,
- u&apos;aggression&apos;: 2234,
- u&apos;increasing&apos;: 3449,
- u&apos;admiral&apos;: 1136,
- u&apos;shocks&apos;: 2460,
- u&apos;pioneering&apos;: 1655,
- u&apos;specialist&apos;: 593,
- u&apos;hero&apos;: 535,
- u&apos;dahl&apos;: 593,
- u&apos;reporter&apos;: 1560,
- u&apos;collette&apos;: 603,
- u&apos;herb&apos;: 287,
- u&apos;error&apos;: 746,
- u&apos;jasmine&apos;: 2872,
- u&apos;brainwashed&apos;: 746,
- u&apos;here&apos;: 2759,
- u&apos;herd&apos;: 2005,
- u&apos;reported&apos;: 1791,
- u&apos;ching&apos;: 471,
- u&apos;blindly&apos;: 47,
- u&apos;china&apos;: 106,
- u&apos;punks&apos;: 806,
- u&apos;hers&apos;: 2237,
- u&apos;herr&apos;: 593,
- u&apos;confronts&apos;: 534,
- u&apos;peaceful&apos;: 345,
- u&apos;dork&apos;: 501,
- u&apos;natured&apos;: 1770,
- u&apos;kids&apos;: 1147,
- u&apos;uplifting&apos;: 916,
- u&apos;unwillingness&apos;: 2610,
- u&apos;oxford&apos;: 720,
- u&apos;pretensions&apos;: 430,
- u&apos;k&apos;: 2018,
- u&apos;climbed&apos;: 70,
- u&apos;unfriendly&apos;: 14,
- u&apos;reports&apos;: 1521,
- u&apos;controversy&apos;: 513,
- u&apos;karin&apos;: 1438,
- u&apos;military&apos;: 1173,
- u&apos;climber&apos;: 2696,
- u&apos;diplomat&apos;: 443,
- u&apos;criticism&apos;: 3561,
- u&apos;golden&apos;: 463,
- u&apos;projection&apos;: 554,
- u&apos;magically&apos;: 2561,
- u&apos;constipated&apos;: 1770,
- u&apos;ground&apos;: 1474,
- u&apos;sweetest&apos;: 1365,
- u&apos;mortensen&apos;: 1181,
- u&apos;explained&apos;: 1731,
- u&apos;lynne&apos;: 3194,
- u&apos;brought&apos;: 1131,
- u&apos;stern&apos;: 628,
- u&apos;cocaine&apos;: 981,
- u&apos;unit&apos;: 1173,
- u&apos;opponents&apos;: 704,
- u&apos;painters&apos;: 3337,
- u&apos;cheating&apos;: 3024,
- u&apos;dna&apos;: 1044,
- u&apos;spoke&apos;: 3427,
- u&apos;geisha&apos;: 2012,
- u&apos;catchy&apos;: 561,
- u&apos;insecurity&apos;: 1785,
- u&apos;trelkovsky&apos;: 2903,
- u&apos;crusty&apos;: 2818,
- u&apos;cannibal&apos;: 1078,
- u&apos;backing&apos;: 913,
- u&apos;symphony&apos;: 2911,
- u&apos;music&apos;: 976,
- u&apos;therefore&apos;: 2847,
- u&apos;passport&apos;: 2985,
- u&apos;violently&apos;: 2121,
- u&apos;strike&apos;: 1585,
- u&apos;capital&apos;: 266,
- u&apos;preparation&apos;: 572,
- u&apos;playboy&apos;: 2809,
- u&apos;females&apos;: 560,
- u&apos;holy&apos;: 790,
- u&apos;relax&apos;: 1712,
- u&apos;successful&apos;: 191,
- u&apos;brings&apos;: 1131,
- u&apos;holt&apos;: 747,
- u&apos;yahoo&apos;: 1445,
- u&apos;gunplay&apos;: 637,
- u&apos;hurt&apos;: 3234,
- u&apos;lore&apos;: 644,
- u&apos;holm&apos;: 3194,
- u&apos;boorman&apos;: 1334,
- u&apos;tying&apos;: 431,
- u&apos;hurl&apos;: 2525,
- u&apos;midst&apos;: 780,
- u&apos;hold&apos;: 2013,
- u&apos;tap&apos;: 449,
- u&apos;dot&apos;: 1414,
- u&apos;circumstances&apos;: 2951,
- u&apos;tastefully&apos;: 207,
- u&apos;morally&apos;: 3188,
- u&apos;locked&apos;: 376,
- u&apos;huppert&apos;: 2872,
- u&apos;pursue&apos;: 692,
- u&apos;onstage&apos;: 2214,
- u&apos;famed&apos;: 593,
- u&apos;accomplishment&apos;: 719,
- u&apos;wade&apos;: 2397,
- u&apos;locker&apos;: 519,
- u&apos;pidgeon&apos;: 3194,
- u&apos;gershon&apos;: 3461,
- u&apos;sexploitation&apos;: 961,
- u&apos;plunges&apos;: 898,
- u&apos;example&apos;: 1049,
- u&apos;subtle&apos;: 1565,
- u&apos;wang&apos;: 1674,
- u&apos;unjust&apos;: 194,
- u&apos;household&apos;: 518,
- u&apos;organized&apos;: 104,
- u&apos;dragons&apos;: 2552,
- u&apos;currency&apos;: 834,
- u&apos;caution&apos;: 190,
- u&apos;reviewing&apos;: 866,
- u&apos;want&apos;: 1930,
- u&apos;counseling&apos;: 409,
- u&apos;drive&apos;: 96,
- u&apos;dyke&apos;: 1762,
- u&apos;gargantuan&apos;: 2435,
- u&apos;absolute&apos;: 652,
- u&apos;preferably&apos;: 447,
- u&apos;provincial&apos;: 1789,
- u&apos;biographical&apos;: 2256,
- u&apos;tchaikovsky&apos;: 3229,
- u&apos;complaining&apos;: 1306,
- u&apos;hoo&apos;: 80,
- u&apos;travel&apos;: 1822,
- u&apos;copious&apos;: 760,
- u&apos;comedians&apos;: 2096,
- u&apos;revisit&apos;: 328,
- u&apos;machine&apos;: 3490,
- u&apos;how&apos;: 1646,
- u&apos;hot&apos;: 2178,
- u&apos;machina&apos;: 1419,
- u&apos;hop&apos;: 151,
- u&apos;significance&apos;: 2477,
- u&apos;mein&apos;: 701,
- u&apos;cheetah&apos;: 959,
- u&apos;footloose&apos;: 767,
- u&apos;preferable&apos;: 1652,
- u&apos;ronnie&apos;: 3483,
- u&apos;classify&apos;: 283,
- u&apos;gaming&apos;: 346,
- u&apos;barbra&apos;: 1700,
- u&apos;oceans&apos;: 1104,
- u&apos;beauty&apos;: 210,
- u&apos;typed&apos;: 1603,
- u&apos;quits&apos;: 642,
- u&apos;invitation&apos;: 1815,
- u&apos;dell&apos;: 801,
- u&apos;pimps&apos;: 3088,
- u&apos;dinosaurs&apos;: 640,
- u&apos;wrong&apos;: 1522,
- u&apos;barney&apos;: 526,
- u&apos;quips&apos;: 1167,
- u&apos;destined&apos;: 473,
- u&apos;types&apos;: 833,
- u&apos;opted&apos;: 1573,
- u&apos;vance&apos;: 1920,
- u&apos;turd&apos;: 3293,
- u&apos;effective&apos;: 2156,
- u&apos;wins&apos;: 1724,
- u&apos;attracts&apos;: 2872,
- u&apos;revolt&apos;: 2925,
- u&apos;headquarters&apos;: 51,
- u&apos;subplots&apos;: 578,
- u&apos;remarkable&apos;: 839,
- u&apos;sickening&apos;: 1935,
- u&apos;wink&apos;: 408,
- u&apos;forties&apos;: 1324,
- u&apos;timers&apos;: 1530,
- u&apos;keeps&apos;: 2676,
- u&apos;democratic&apos;: 940,
- u&apos;denholm&apos;: 1195,
- u&apos;wing&apos;: 2284,
- u&apos;wind&apos;: 2231,
- u&apos;wine&apos;: 1377,
- u&apos;sprawling&apos;: 423,
- u&apos;afterwards&apos;: 1620,
- u&apos;feedback&apos;: 1652,
- u&apos;sanchez&apos;: 1175,
- u&apos;welcomed&apos;: 1079,
- u&apos;dreamed&apos;: 1603,
- u&apos;vary&apos;: 2706,
- u&apos;hysterics&apos;: 197,
- u&apos;sidekicks&apos;: 3501,
- u&apos;butcher&apos;: 3328,
- u&apos;mabel&apos;: 492,
- u&apos;vidor&apos;: 1422,
- u&apos;fetched&apos;: 1836,
- u&apos;fidelity&apos;: 2872,
- u&apos;owens&apos;: 3483,
- u&apos;wrought&apos;: 39,
- u&apos;dreamer&apos;: 118,
- u&apos;admirably&apos;: 496,
- u&apos;conned&apos;: 746,
- u&apos;wickedly&apos;: 408,
- u&apos;reprises&apos;: 3194,
- u&apos;fit&apos;: 68,
- u&apos;bringing&apos;: 1131,
- u&apos;fix&apos;: 2200,
- u&apos;striking&apos;: 2404,
- u&apos;possessions&apos;: 1815,
- u&apos;courageous&apos;: 838,
- u&apos;survivors&apos;: 2260,
- u&apos;rescued&apos;: 2083,
- u&apos;matured&apos;: 613,
- u&apos;invisibility&apos;: 2733,
- u&apos;omitted&apos;: 902,
- u&apos;wales&apos;: 491,
- u&apos;hidden&apos;: 302,
- u&apos;admirable&apos;: 139,
- u&apos;easier&apos;: 1579,
- u&apos;zucker&apos;: 753,
- u&apos;glorify&apos;: 307,
- u&apos;selleck&apos;: 176,
- u&apos;corridor&apos;: 958,
- u&apos;songwriter&apos;: 3194,
- u&apos;slate&apos;: 1441,
- u&apos;elementary&apos;: 590,
- u&apos;zac&apos;: 2324,
- u&apos;slicing&apos;: 1298,
- u&apos;ugliness&apos;: 15,
- u&apos;tch&apos;: 2174,
- u&apos;detachment&apos;: 742,
- u&apos;effects&apos;: 1207,
- u&apos;schools&apos;: 590,
- u&apos;internally&apos;: 1399,
- u&apos;sixteen&apos;: 3266,
- u&apos;undeveloped&apos;: 1496,
- u&apos;silver&apos;: 3618,
- u&apos;saddened&apos;: 1291,
- u&apos;whitman&apos;: 1360,
- u&apos;represents&apos;: 1631,
- u&apos;lupino&apos;: 97,
- u&apos;haphazardly&apos;: 2648,
- u&apos;clumsy&apos;: 763,
- u&apos;lillian&apos;: 1892,
- u&apos;debut&apos;: 1929,
- u&apos;barton&apos;: 526,
- u&apos;dumps&apos;: 79,
- u&apos;crops&apos;: 2805,
- u&apos;arrow&apos;: 1817,
- u&apos;ingrid&apos;: 303,
- u&apos;addicted&apos;: 1806,
- u&apos;volcano&apos;: 2044,
- u&apos;bateman&apos;: 868,
- u&apos;burial&apos;: 1298,
- u&apos;preceded&apos;: 789,
- u&apos;whim&apos;: 1507,
- u&apos;financial&apos;: 1107,
- u&apos;snakes&apos;: 2215,
- u&apos;archetypes&apos;: 6,
- u&apos;knockout&apos;: 97,
- u&apos;series&apos;: 140,
- u&apos;stronger&apos;: 363,
- u&apos;abuse&apos;: 2243,
- u&apos;thelma&apos;: 3192,
- u&apos;whiz&apos;: 511,
- u&apos;substantially&apos;: 696,
- u&apos;laboratory&apos;: 309,
- u&apos;whit&apos;: 628,
- u&apos;truman&apos;: 3185,
- u&apos;ring&apos;: 86,
- u&apos;whip&apos;: 497,
- u&apos;borne&apos;: 2602,
- u&apos;shame&apos;: 2290,
- u&apos;forwarding&apos;: 117,
- u&apos;diction&apos;: 496,
- u&apos;oprah&apos;: 3557,
- u&apos;smirk&apos;: 1619,
- u&apos;inaccurate&apos;: 1885,
- u&apos;mayan&apos;: 952,
- u&apos;freeze&apos;: 2203,
- u&apos;george&apos;: 2436,
- u&apos;rd&apos;: 1994,
- u&apos;re&apos;: 1938,
- u&apos;encourage&apos;: 2011,
- u&apos;adapt&apos;: 1703,
- u&apos;rukh&apos;: 1607,
- u&apos;cheerfully&apos;: 2730,
- u&apos;outburst&apos;: 1442,
- u&apos;foundation&apos;: 2422,
- u&apos;abbott&apos;: 553,
- u&apos;clarence&apos;: 1195,
- u&apos;assured&apos;: 2307,
- u&apos;dracula&apos;: 589,
- u&apos;threatened&apos;: 2083,
- u&apos;fugitive&apos;: 104,
- u&apos;rocker&apos;: 2174,
- u&apos;necessarily&apos;: 1859,
- u&apos;overacting&apos;: 32,
- u&apos;encountering&apos;: 1303,
- u&apos;grapes&apos;: 2094,
- u&apos;packard&apos;: 2517,
- u&apos;mobsters&apos;: 714,
- u&apos;stacy&apos;: 2809,
- u&apos;gameplay&apos;: 2428,
- u&apos;metallica&apos;: 1507,
- u&apos;reiser&apos;: 488,
- u&apos;enormous&apos;: 3624,
- u&apos;ate&apos;: 1784,
- u&apos;bates&apos;: 478,
- u&apos;exposing&apos;: 2602,
- u&apos;sickeningly&apos;: 1840,
- u&apos;enjoy&apos;: 924,
- u&apos;pleas&apos;: 761,
- u&apos;mcqueen&apos;: 1955,
- u&apos;ups&apos;: 2419,
- u&apos;shipped&apos;: 718,
- u&apos;disturbed&apos;: 2278,
- u&apos;speedy&apos;: 2562,
- u&apos;behemoth&apos;: 1104,
- u&apos;tempting&apos;: 531,
- u&apos;suggestion&apos;: 2950,
- u&apos;clothes&apos;: 622,
- u&apos;chronic&apos;: 1785,
- u&apos;caught&apos;: 2075,
- u&apos;speeds&apos;: 1148,
- u&apos;purpose&apos;: 1636,
- u&apos;nigel&apos;: 1195,
- u&apos;elmo&apos;: 390,
- u&apos;wasp&apos;: 501,
- u&apos;subtlety&apos;: 2446,
- u&apos;wheel&apos;: 183,
- u&apos;channels&apos;: 795,
- u&apos;wash&apos;: 1252,
- u&apos;spinning&apos;: 497,
- u&apos;winded&apos;: 3311,
- u&apos;rubbing&apos;: 1546,
- u&apos;wasn&apos;: 3539,
- u&apos;clarity&apos;: 1253,
- u&apos;sutherland&apos;: 1288,
- u&apos;bitten&apos;: 1122,
- u&apos;olds&apos;: 1472,
- u&apos;basketball&apos;: 841,
- u&apos;service&apos;: 615,
- u&apos;whorehouse&apos;: 170,
- u&apos;vargas&apos;: 1233,
- u&apos;engagement&apos;: 2125,
+<pre>{u&apos;raining&apos;: 872,
+ u&apos;writings&apos;: 2457,
+ u&apos;hordes&apos;: 2720,
+ u&apos;galactica&apos;: 2626,
+ u&apos;foul&apos;: 1491,
+ u&apos;four&apos;: 505,
+ u&apos;prices&apos;: 99,
+ u&apos;woods&apos;: 3207,
+ u&apos;spiders&apos;: 1416,
+ u&apos;hanging&apos;: 1110,
+ u&apos;woody&apos;: 568,
+ u&apos;comically&apos;: 392,
+ u&apos;gabrielle&apos;: 1686,
+ u&apos;marching&apos;: 839,
+ u&apos;looking&apos;: 3090,
+ u&apos;electricity&apos;: 203,
+ u&apos;aileen&apos;: 272,
+ u&apos;objection&apos;: 1121,
+ u&apos;unanswered&apos;: 615,
+ u&apos;originality&apos;: 1519,
+ u&apos;fingernails&apos;: 474,
+ u&apos;wholeheartedly&apos;: 1629,
+ u&apos;lori&apos;: 2521,
+ u&apos;rickman&apos;: 2614,
+ u&apos;lord&apos;: 539,
+ u&apos;immature&apos;: 2360,
+ u&apos;meadows&apos;: 331,
+ u&apos;shaving&apos;: 639,
+ u&apos;sinking&apos;: 31,
+ u&apos;delpy&apos;: 118,
+ u&apos;stallone&apos;: 994,
+ u&apos;brundle&apos;: 3043,
+ u&apos;regional&apos;: 513,
+ u&apos;montage&apos;: 445,
+ u&apos;dell&apos;: 142,
+ u&apos;replaces&apos;: 19,
+ u&apos;yellow&apos;: 216,
+ u&apos;taj&apos;: 118,
+ u&apos;fur&apos;: 216,
+ u&apos;stabbed&apos;: 1807,
+ u&apos;screaming&apos;: 2806,
+ u&apos;bourne&apos;: 1111,
+ u&apos;disturb&apos;: 1026,
+ u&apos;basics&apos;: 842,
+ u&apos;uttering&apos;: 872,
+ u&apos;grueling&apos;: 958,
+ u&apos;wooden&apos;: 1335,
+ u&apos;commenter&apos;: 3155,
+ u&apos;voyeur&apos;: 444,
+ u&apos;wednesday&apos;: 881,
+ u&apos;viable&apos;: 102,
+ u&apos;solid&apos;: 173,
+ u&apos;brutish&apos;: 3252,
+ u&apos;crotch&apos;: 195,
+ u&apos;succession&apos;: 363,
+ u&apos;stereotypical&apos;: 3231,
+ u&apos;commented&apos;: 606,
+ u&apos;asian&apos;: 1460,
+ u&apos;pumbaa&apos;: 598,
+ u&apos;merlin&apos;: 73,
+ u&apos;trump&apos;: 674,
+ u&apos;specially&apos;: 2416,
+ u&apos;nigh&apos;: 2139,
+ u&apos;tired&apos;: 2377,
+ u&apos;miller&apos;: 1138,
+ u&apos;bacon&apos;: 362,
+ u&apos;frederick&apos;: 146,
+ u&apos;pulse&apos;: 357,
+ u&apos;tires&apos;: 788,
+ u&apos;bannister&apos;: 73,
+ u&apos;second&apos;: 330,
+ u&apos;valiant&apos;: 196,
+ u&apos;currie&apos;: 717,
+ u&apos;distinctly&apos;: 1136,
+ u&apos;sterile&apos;: 40,
+ u&apos;loathing&apos;: 699,
+ u&apos;mason&apos;: 1135,
+ u&apos;quite&apos;: 2185,
+ u&apos;theory&apos;: 1618,
+ u&apos;hilariously&apos;: 1314,
+ u&apos;errors&apos;: 181,
+ u&apos;dialogs&apos;: 235,
+ u&apos;roddy&apos;: 2251,
+ u&apos;ruthless&apos;: 2824,
+ u&apos;thunder&apos;: 31,
+ u&apos;boogie&apos;: 3202,
+ u&apos;contributed&apos;: 1888,
+ u&apos;fingers&apos;: 512,
+ u&apos;kent&apos;: 522,
+ u&apos;aggression&apos;: 2146,
+ u&apos;increasing&apos;: 2702,
+ u&apos;admiral&apos;: 1267,
+ u&apos;shocks&apos;: 1067,
+ u&apos;pioneering&apos;: 1364,
+ u&apos;specialist&apos;: 208,
+ u&apos;hero&apos;: 386,
+ u&apos;dahl&apos;: 682,
+ u&apos;reporter&apos;: 995,
+ u&apos;collette&apos;: 2475,
+ u&apos;micheal&apos;: 112,
+ u&apos;error&apos;: 3128,
+ u&apos;jasmine&apos;: 635,
+ u&apos;brainwashed&apos;: 383,
+ u&apos;here&apos;: 2663,
+ u&apos;herd&apos;: 510,
+ u&apos;reported&apos;: 1868,
+ u&apos;ching&apos;: 1331,
+ u&apos;china&apos;: 1038,
+ u&apos;punks&apos;: 705,
+ u&apos;hers&apos;: 2841,
+ u&apos;parenting&apos;: 80,
+ u&apos;confronts&apos;: 2958,
+ u&apos;peaceful&apos;: 628,
+ u&apos;dork&apos;: 450,
+ u&apos;natured&apos;: 1768,
+ u&apos;kids&apos;: 167,
+ u&apos;uplifting&apos;: 1827,
+ u&apos;oxford&apos;: 314,
+ u&apos;pretensions&apos;: 1187,
+ u&apos;k&apos;: 567,
+ u&apos;reports&apos;: 1868,
+ u&apos;controversy&apos;: 1037,
+ u&apos;military&apos;: 3287,
+ u&apos;climber&apos;: 674,
+ u&apos;diplomat&apos;: 3252,
+ u&apos;criticism&apos;: 1533,
+ u&apos;golden&apos;: 1673,
+ u&apos;projection&apos;: 916,
+ u&apos;magically&apos;: 872,
+ u&apos;owed&apos;: 402,
+ u&apos;ground&apos;: 395,
+ u&apos;mortensen&apos;: 2002,
+ u&apos;explained&apos;: 2056,
+ u&apos;replace&apos;: 402,
+ u&apos;brought&apos;: 1050,
+ u&apos;stern&apos;: 172,
+ u&apos;cocaine&apos;: 2281,
+ u&apos;unit&apos;: 649,
+ u&apos;opponents&apos;: 665,
+ u&apos;painters&apos;: 84,
+ u&apos;cheating&apos;: 1671,
+ u&apos;dna&apos;: 1313,
+ u&apos;spoke&apos;: 372,
+ u&apos;geisha&apos;: 2510,
+ u&apos;catchy&apos;: 2119,
+ u&apos;cannibal&apos;: 458,
+ u&apos;backing&apos;: 140,
+ u&apos;symphony&apos;: 6,
+ u&apos;music&apos;: 1603,
+ u&apos;therefore&apos;: 2230,
+ u&apos;passport&apos;: 612,
+ u&apos;violently&apos;: 3214,
+ u&apos;strike&apos;: 843,
+ u&apos;capital&apos;: 1176,
+ u&apos;preparation&apos;: 2240,
+ u&apos;playboy&apos;: 3167,
+ u&apos;females&apos;: 1394,
+ u&apos;holy&apos;: 2899,
+ u&apos;relax&apos;: 1547,
+ u&apos;successful&apos;: 2303,
+ u&apos;brings&apos;: 1050,
+ u&apos;holt&apos;: 2155,
+ u&apos;yahoo&apos;: 2112,
+ u&apos;gunplay&apos;: 504,
+ u&apos;hurt&apos;: 2480,
+ u&apos;lore&apos;: 192,
+ u&apos;holm&apos;: 2614,
+ u&apos;boorman&apos;: 756,
+ u&apos;tying&apos;: 1782,
+ u&apos;teaching&apos;: 1077,
+ u&apos;midst&apos;: 116,
+ u&apos;hold&apos;: 1571,
+ u&apos;dot&apos;: 2112,
+ u&apos;circumstances&apos;: 3088,
+ u&apos;tastefully&apos;: 2045,
+ u&apos;morally&apos;: 2507,
+ u&apos;locked&apos;: 1550,
+ u&apos;huppert&apos;: 345,
+ u&apos;pursue&apos;: 2292,
+ u&apos;famed&apos;: 682,
+ u&apos;accomplishment&apos;: 2659,
+ u&apos;wade&apos;: 3257,
+ u&apos;locker&apos;: 473,
+ u&apos;pidgeon&apos;: 1058,
+ u&apos;yup&apos;: 65,
+ u&apos;sexploitation&apos;: 927,
+ u&apos;plunges&apos;: 2891,
+ u&apos;example&apos;: 2277,
+ u&apos;wang&apos;: 73,
+ u&apos;household&apos;: 3289,
+ u&apos;organized&apos;: 2824,
+ u&apos;dragons&apos;: 2114,
+ u&apos;facade&apos;: 537,
+ u&apos;caution&apos;: 2970,
+ u&apos;reviewing&apos;: 1755,
+ u&apos;want&apos;: 1202,
+ u&apos;drive&apos;: 2259,
+ u&apos;dyke&apos;: 2106,
+ u&apos;absolute&apos;: 3025,
+ u&apos;preferably&apos;: 10,
+ u&apos;provincial&apos;: 314,
+ u&apos;biographical&apos;: 209,
+ u&apos;tchaikovsky&apos;: 6,
+ u&apos;complaining&apos;: 1100,
+ u&apos;gremlins&apos;: 2877,
+ u&apos;travel&apos;: 2482,
+ u&apos;copious&apos;: 2468,
+ u&apos;comedians&apos;: 3085,
+ u&apos;revisit&apos;: 977,
+ u&apos;machine&apos;: 1084,
+ u&apos;how&apos;: 1936,
+ u&apos;hot&apos;: 57,
+ u&apos;machina&apos;: 1039,
+ u&apos;hop&apos;: 681,
+ u&apos;significance&apos;: 2270,
+ u&apos;mein&apos;: 1722,
+ u&apos;footloose&apos;: 343,
+ u&apos;preferable&apos;: 1705,
+ u&apos;ronnie&apos;: 1040,
+ u&apos;classify&apos;: 2821,
+ u&apos;gaming&apos;: 2351,
+ u&apos;barbra&apos;: 762,
+ u&apos;beauty&apos;: 2842,
+ u&apos;yun&apos;: 1842,
+ u&apos;misunderstanding&apos;: 1120,
+ u&apos;pimps&apos;: 439,
+ u&apos;dinosaurs&apos;: 719,
+ u&apos;wrong&apos;: 2989,
+ u&apos;barney&apos;: 2520,
+ u&apos;quips&apos;: 1794,
+ u&apos;destined&apos;: 1804,
+ u&apos;types&apos;: 258,
+ u&apos;opted&apos;: 402,
+ u&apos;vance&apos;: 1695,
+ u&apos;turd&apos;: 804,
+ u&apos;effective&apos;: 1365,
+ u&apos;wins&apos;: 1210,
+ u&apos;attracts&apos;: 1686,
+ u&apos;revolt&apos;: 628,
+ u&apos;headquarters&apos;: 1168,
+ u&apos;subplots&apos;: 587,
+ u&apos;remarkable&apos;: 1365,
+ u&apos;sickening&apos;: 1289,
+ u&apos;wink&apos;: 377,
+ u&apos;forties&apos;: 1773,
+ u&apos;keeps&apos;: 1614,
+ u&apos;democratic&apos;: 1176,
+ u&apos;denholm&apos;: 717,
+ u&apos;wing&apos;: 1349,
+ u&apos;wind&apos;: 1736,
+ u&apos;wine&apos;: 448,
+ u&apos;sprawling&apos;: 2975,
+ u&apos;afterwards&apos;: 2168,
+ u&apos;feedback&apos;: 1781,
+ u&apos;sanchez&apos;: 43,
+ u&apos;welcomed&apos;: 1244,
+ u&apos;dreamed&apos;: 535,
+ u&apos;vary&apos;: 88,
+ u&apos;sidekicks&apos;: 840,
+ u&apos;butcher&apos;: 1821,
+ u&apos;mabel&apos;: 2502,
+ u&apos;vidor&apos;: 682,
+ u&apos;fetched&apos;: 1266,
+ u&apos;fidelity&apos;: 1121,
+ u&apos;wrought&apos;: 2586,
+ u&apos;dreamer&apos;: 444,
+ u&apos;admirably&apos;: 643,
+ u&apos;conned&apos;: 2294,
+ u&apos;wickedly&apos;: 87,
+ u&apos;reprises&apos;: 1203,
+ u&apos;fit&apos;: 557,
+ u&apos;bringing&apos;: 1050,
+ u&apos;fix&apos;: 3173,
+ u&apos;striking&apos;: 1134,
+ u&apos;courageous&apos;: 3227,
+ u&apos;survivors&apos;: 2981,
+ u&apos;rescued&apos;: 1293,
+ u&apos;matured&apos;: 107,
+ u&apos;invisibility&apos;: 665,
+ u&apos;omitted&apos;: 2211,
+ u&apos;wales&apos;: 1264,
+ u&apos;hidden&apos;: 601,
+ u&apos;admirable&apos;: 530,
+ u&apos;easier&apos;: 102,
+ u&apos;zucker&apos;: 384,
+ u&apos;glorify&apos;: 1230,
+ u&apos;selleck&apos;: 1068,
+ u&apos;corridor&apos;: 31,
+ u&apos;songwriter&apos;: 1473,
+ u&apos;elementary&apos;: 2576,
+ u&apos;zac&apos;: 343,
+ u&apos;ugliness&apos;: 2702,
+ u&apos;tch&apos;: 450,
+ u&apos;detachment&apos;: 1121,
+ u&apos;effects&apos;: 2310,
+ u&apos;schools&apos;: 581,
+ u&apos;sixteen&apos;: 1079,
+ u&apos;undeveloped&apos;: 315,
+ u&apos;silver&apos;: 1828,
+ u&apos;saddened&apos;: 30,
+ u&apos;whitman&apos;: 1200,
+ u&apos;represents&apos;: 1690,
+ u&apos;lupino&apos;: 1203,
+ u&apos;clumsy&apos;: 1335,
+ u&apos;lillian&apos;: 1341,
+ u&apos;debut&apos;: 682,
+ u&apos;barton&apos;: 717,
+ u&apos;dumps&apos;: 2958,
+ u&apos;skills&apos;: 245,
+ u&apos;arrow&apos;: 639,
+ u&apos;ingrid&apos;: 1816,
+ u&apos;addicted&apos;: 2401,
+ u&apos;volcano&apos;: 1001,
+ u&apos;bateman&apos;: 1070,
+ u&apos;burial&apos;: 733,
+ u&apos;preceded&apos;: 298,
+ u&apos;whim&apos;: 468,
+ u&apos;financial&apos;: 2518,
+ u&apos;snakes&apos;: 1416,
+ u&apos;knockout&apos;: 1722,
+ u&apos;series&apos;: 420,
+ u&apos;allan&apos;: 1179,
+ u&apos;abuse&apos;: 373,
+ u&apos;thelma&apos;: 491,
+ u&apos;whiz&apos;: 763,
+ u&apos;substantially&apos;: 200,
+ u&apos;laboratory&apos;: 1001,
+ u&apos;whit&apos;: 3261,
+ u&apos;truman&apos;: 158,
+ u&apos;ring&apos;: 1753,
+ u&apos;whip&apos;: 216,
+ u&apos;rv&apos;: 1325,
+ u&apos;forwarding&apos;: 1031,
+ u&apos;oprah&apos;: 2197,
+ u&apos;smirk&apos;: 2465,
+ u&apos;ha&apos;: 2948,
+ u&apos;mayan&apos;: 628,
+ u&apos;george&apos;: 989,
+ u&apos;rd&apos;: 855,
+ u&apos;re&apos;: 999,
+ u&apos;encourage&apos;: 1629,
+ u&apos;adapt&apos;: 2592,
+ u&apos;rukh&apos;: 2409,
+ u&apos;cheerfully&apos;: 377,
+ u&apos;foundation&apos;: 1154,
+ u&apos;abbott&apos;: 871,
+ u&apos;clarence&apos;: 146,
+ u&apos;assured&apos;: 2986,
+ u&apos;dracula&apos;: 712,
+ u&apos;threatened&apos;: 472,
+ u&apos;fugitive&apos;: 1267,
+ u&apos;rocker&apos;: 1997,
+ u&apos;necessarily&apos;: 2860,
+ u&apos;overacting&apos;: 104,
+ u&apos;encountering&apos;: 437,
+ u&apos;grapes&apos;: 674,
+ u&apos;mobsters&apos;: 1776,
+ u&apos;stacy&apos;: 648,
+ u&apos;gameplay&apos;: 2354,
+ u&apos;universally&apos;: 1605,
+ u&apos;reiser&apos;: 1307,
+ u&apos;enormous&apos;: 2427,
+ u&apos;ate&apos;: 482,
+ u&apos;bates&apos;: 1473,
+ u&apos;exposing&apos;: 1229,
+ u&apos;shelves&apos;: 821,
+ u&apos;enjoy&apos;: 1464,
+ u&apos;mcqueen&apos;: 742,
+ u&apos;ups&apos;: 889,
+ u&apos;shipped&apos;: 1168,
+ u&apos;disturbed&apos;: 854,
+ u&apos;speedy&apos;: 336,
+ u&apos;behemoth&apos;: 1838,
+ u&apos;tempting&apos;: 1975,
+ u&apos;kingdom&apos;: 3110,
+ u&apos;clothes&apos;: 650,
+ u&apos;chronic&apos;: 2633,
+ u&apos;caught&apos;: 1944,
+ u&apos;speeds&apos;: 4,
+ u&apos;purpose&apos;: 2639,
+ u&apos;nigel&apos;: 1058,
+ u&apos;elmo&apos;: 343,
+ u&apos;wasp&apos;: 1749,
+ u&apos;subtlety&apos;: 1763,
+ u&apos;subtle&apos;: 1827,
+ u&apos;channels&apos;: 273,
+ u&apos;wash&apos;: 106,
+ u&apos;spinning&apos;: 14,
+ u&apos;winded&apos;: 409,
+ u&apos;rubbing&apos;: 474,
+ u&apos;wasn&apos;: 934,
+ u&apos;clarity&apos;: 2311,
+ u&apos;sutherland&apos;: 2470,
+ u&apos;bitten&apos;: 1807,
+ u&apos;olds&apos;: 1079,
+ u&apos;basketball&apos;: 148,
+ u&apos;service&apos;: 1607,
+ u&apos;similarly&apos;: 2246,
+ u&apos;vargas&apos;: 1570,
+ u&apos;engagement&apos;: 194,
  u&apos;reuben&apos;: 613,
- u&apos;tango&apos;: 1401,
- u&apos;ruins&apos;: 3378,
- u&apos;needed&apos;: 1421,
- u&apos;theatrically&apos;: 473,
- u&apos;ambiguous&apos;: 923,
- u&apos;master&apos;: 1281,
- u&apos;listed&apos;: 2009,
- u&apos;blossoms&apos;: 2125,
- u&apos;milligan&apos;: 775,
- u&apos;critter&apos;: 2506,
- u&apos;legs&apos;: 2340,
- u&apos;bitter&apos;: 3086,
- u&apos;genesis&apos;: 2795,
- u&apos;hewitt&apos;: 1982,
- u&apos;danish&apos;: 1230,
- u&apos;rewards&apos;: 584,
- u&apos;shambles&apos;: 769,
- u&apos;collapse&apos;: 1537,
- u&apos;canned&apos;: 263,
- u&apos;predictably&apos;: 284,
- u&apos;scrapes&apos;: 591,
- u&apos;snooty&apos;: 2809,
- u&apos;bounty&apos;: 1403,
- u&apos;scenery&apos;: 879,
- u&apos;prosthetic&apos;: 521,
- u&apos;wisdom&apos;: 2180,
- u&apos;mutilated&apos;: 749,
- u&apos;palsy&apos;: 2495,
- u&apos;legally&apos;: 2445,
- u&apos;evil&apos;: 254,
- u&apos;finesse&apos;: 954,
- u&apos;zany&apos;: 2512,
- u&apos;crawl&apos;: 186,
- u&apos;positively&apos;: 1840,
- u&apos;expanding&apos;: 3,
- u&apos;hays&apos;: 2318,
- u&apos;ahmed&apos;: 2872,
- u&apos;peril&apos;: 761,
- u&apos;zatoichi&apos;: 1728,
- u&apos;showed&apos;: 221,
- u&apos;elegant&apos;: 2028,
- u&apos;pantoliano&apos;: 628,
- u&apos;outlaw&apos;: 869,
- u&apos;surrogate&apos;: 2199,
- u&apos;tree&apos;: 1108,
- u&apos;rusty&apos;: 501,
- u&apos;nations&apos;: 1479,
- u&apos;shower&apos;: 915,
- u&apos;idle&apos;: 3088,
- u&apos;peppard&apos;: 216,
- u&apos;flavour&apos;: 39,
- u&apos;endure&apos;: 2293,
- u&apos;feeling&apos;: 3017,
- u&apos;seduced&apos;: 1079,
- u&apos;unintended&apos;: 1141,
- u&apos;acclaim&apos;: 791,
- u&apos;groaning&apos;: 1266,
- u&apos;willingness&apos;: 1825,
- u&apos;runner&apos;: 1397,
- u&apos;boston&apos;: 1004,
- u&apos;politely&apos;: 1153,
- u&apos;spectrum&apos;: 3240,
- u&apos;spent&apos;: 73,
- u&apos;corny&apos;: 703,
- u&apos;overs&apos;: 3436,
- u&apos;alive&apos;: 1947,
- u&apos;dozen&apos;: 1753,
- u&apos;skips&apos;: 3398,
- u&apos;affairs&apos;: 3550,
- u&apos;cesar&apos;: 3194,
- u&apos;wholesome&apos;: 1611,
- u&apos;corbin&apos;: 1919,
- u&apos;concrete&apos;: 327,
- u&apos;climate&apos;: 182,
- u&apos;kaye&apos;: 1857,
- u&apos;responsible&apos;: 1845,
- u&apos;gripe&apos;: 2382,
- u&apos;eagerly&apos;: 986,
- u&apos;connelly&apos;: 1982,
- u&apos;recommended&apos;: 896,
- u&apos;causing&apos;: 718,
- u&apos;absorbed&apos;: 750,
- u&apos;amusing&apos;: 3455,
- u&apos;doors&apos;: 552,
- u&apos;season&apos;: 1645,
- u&apos;grips&apos;: 1500,
- u&apos;susie&apos;: 82,
- u&apos;committing&apos;: 741,
- u&apos;mcewan&apos;: 1031,
- u&apos;thrilled&apos;: 3589,
- u&apos;screwing&apos;: 284,
- u&apos;mystique&apos;: 709,
- u&apos;cinematic&apos;: 2114,
- u&apos;resonates&apos;: 467,
- u&apos;y&apos;: 347,
- u&apos;gallagher&apos;: 2957,
- u&apos;addict&apos;: 1806,
- u&apos;reverence&apos;: 2477,
- u&apos;ashes&apos;: 1587,
- u&apos;retaining&apos;: 39,
- u&apos;thriller&apos;: 36,
- u&apos;morality&apos;: 3240,
- u&apos;bradford&apos;: 1195,
- u&apos;hut&apos;: 400,
- u&apos;singer&apos;: 1096,
- u&apos;stupid&apos;: 1634,
- u&apos;episode&apos;: 1645,
- u&apos;cops&apos;: 2704,
- u&apos;professor&apos;: 1224,
- u&apos;camp&apos;: 2947,
- u&apos;drunks&apos;: 3088,
- u&apos;tech&apos;: 220,
- u&apos;temperamental&apos;: 842,
- u&apos;sensationalism&apos;: 3626,
- u&apos;detriment&apos;: 472,
- u&apos;costello&apos;: 553,
- u&apos;mating&apos;: 583,
- u&apos;scream&apos;: 3279,
- u&apos;incomplete&apos;: 923,
- u&apos;marvel&apos;: 2948,
- u&apos;saying&apos;: 1694,
- u&apos;cooking&apos;: 1154,
- u&apos;bomb&apos;: 1575,
- u&apos;insects&apos;: 1044,
- u&apos;tequila&apos;: 519,
- u&apos;teresa&apos;: 518,
- u&apos;bonnie&apos;: 2309,
- u&apos;sexist&apos;: 527,
- u&apos;padded&apos;: 2648,
- u&apos;prix&apos;: 1381,
- u&apos;gauge&apos;: 3362,
- u&apos;asia&apos;: 3376,
- u&apos;participate&apos;: 1875,
- u&apos;lethal&apos;: 1757,
- u&apos;hungary&apos;: 1789,
- u&apos;tempted&apos;: 3500,
- u&apos;cheaply&apos;: 2232,
- u&apos;eliminated&apos;: 441,
- u&apos;schmid&apos;: 1654,
- u&apos;caper&apos;: 1610,
- u&apos;orleans&apos;: 1234,
- u&apos;touches&apos;: 2378,
- u&apos;busy&apos;: 1339,
- u&apos;clicked&apos;: 866,
- u&apos;lights&apos;: 2778,
- u&apos;headline&apos;: 2230,
- u&apos;menu&apos;: 857,
- u&apos;buxom&apos;: 662,
- u&apos;bust&apos;: 2092,
- u&apos;than&apos;: 1463,
- u&apos;rico&apos;: 772,
- u&apos;theme&apos;: 549,
- u&apos;bliss&apos;: 364,
- u&apos;touched&apos;: 2815,
- u&apos;rich&apos;: 700,
- u&apos;woodward&apos;: 2941,
- u&apos;foolishly&apos;: 2810,
- u&apos;rice&apos;: 1410,
- u&apos;plate&apos;: 1817,
- u&apos;klein&apos;: 229,
- u&apos;schooler&apos;: 220,
- u&apos;culkin&apos;: 2699,
- u&apos;terrors&apos;: 1759,
- u&apos;foremost&apos;: 3010,
- u&apos;platt&apos;: 775,
- u&apos;reversal&apos;: 3396,
- u&apos;altogether&apos;: 3614,
- u&apos;relish&apos;: 1110,
- u&apos;tawdry&apos;: 1241,
- u&apos;droning&apos;: 3003,
- u&apos;profoundly&apos;: 3131,
- u&apos;contributes&apos;: 954,
- u&apos;jaguar&apos;: 1838,
- u&apos;avenger&apos;: 1109,
- u&apos;spilling&apos;: 1298,
- u&apos;nicely&apos;: 782,
- u&apos;maverick&apos;: 3483,
- u&apos;hello&apos;: 1429,
- u&apos;dipping&apos;: 3150,
- u&apos;patch&apos;: 431,
- u&apos;posh&apos;: 720,
- u&apos;decoys&apos;: 893,
- u&apos;openly&apos;: 1400,
- u&apos;piggy&apos;: 2946,
- u&apos;release&apos;: 1632,
- u&apos;boarded&apos;: 1587,
- u&apos;urgency&apos;: 1239,
- u&apos;atomic&apos;: 1575,
- u&apos;respond&apos;: 174,
- u&apos;blew&apos;: 1367,
- u&apos;mandatory&apos;: 3630,
- u&apos;disaster&apos;: 3268,
- u&apos;fair&apos;: 2800,
- u&apos;sensitivity&apos;: 3440,
- u&apos;evolving&apos;: 742,
- u&apos;recruit&apos;: 714,
- u&apos;unexpectedly&apos;: 486,
- u&apos;goodnight&apos;: 176,
- u&apos;sparkling&apos;: 300,
- u&apos;imho&apos;: 1991,
- u&apos;erika&apos;: 3459,
- u&apos;fail&apos;: 2966,
- u&apos;resigned&apos;: 743,
- u&apos;skulls&apos;: 2506,
- u&apos;best&apos;: 712,
- u&apos;karate&apos;: 710,
- u&apos;cobra&apos;: 1676,
- u&apos;sheffer&apos;: 3194,
- u&apos;kersey&apos;: 1097,
- u&apos;manson&apos;: 3186,
- u&apos;ambitions&apos;: 1685,
- u&apos;lots&apos;: 653,
- u&apos;lotr&apos;: 2779,
- u&apos;ringu&apos;: 86,
- u&apos;irs&apos;: 3343,
- u&apos;wikipedia&apos;: 84,
- u&apos;solace&apos;: 2277,
- u&apos;ringo&apos;: 471,
- u&apos;pressures&apos;: 2981,
- u&apos;imperfections&apos;: 917,
- u&apos;score&apos;: 976,
- u&apos;melissa&apos;: 868,
- u&apos;kisna&apos;: 2281,
- u&apos;scorn&apos;: 903,
- u&apos;ira&apos;: 869,
- u&apos;pirate&apos;: 3258,
- u&apos;skimpy&apos;: 1790,
- u&apos;preserve&apos;: 1537,
- u&apos;claws&apos;: 2506,
- u&apos;screwball&apos;: 361,
- u&apos;lamas&apos;: 1015,
- u&apos;parallels&apos;: 658,
- u&apos;extend&apos;: 1170,
- u&apos;nature&apos;: 549,
- u&apos;rolled&apos;: 1266,
- u&apos;potts&apos;: 1704,
- u&apos;juliet&apos;: 850,
- u&apos;schoolboy&apos;: 501,
- u&apos;wtc&apos;: 2044,
- u&apos;rude&apos;: 672,
- u&apos;extent&apos;: 1226,
- u&apos;defiance&apos;: 1785,
- u&apos;carbon&apos;: 604,
- u&apos;debt&apos;: 1279,
- u&apos;roller&apos;: 341,
- u&apos;askey&apos;: 2718,
- u&apos;patented&apos;: 1833,
- u&apos;accident&apos;: 2986,
- u&apos;sacrificing&apos;: 903,
- u&apos;veer&apos;: 3076,
- u&apos;disdain&apos;: 2610,
- u&apos;country&apos;: 106,
- u&apos;pits&apos;: 52,
- u&apos;readers&apos;: 1791,
- u&apos;adventurer&apos;: 3501,
- u&apos;adventures&apos;: 2853,
- u&apos;demanded&apos;: 2810,
- u&apos;planned&apos;: 2182,
- u&apos;exec&apos;: 1543,
- u&apos;marrying&apos;: 2199,
- u&apos;installments&apos;: 75,
- u&apos;argue&apos;: 3505,
- u&apos;adapted&apos;: 49,
- u&apos;asked&apos;: 2791,
- u&apos;rehash&apos;: 2424,
- u&apos;exile&apos;: 572,
- u&apos;shriek&apos;: 1577,
- u&apos;maclaine&apos;: 514,
- u&apos;irresponsible&apos;: 672,
- u&apos;rednecks&apos;: 806,
- u&apos;opportunities&apos;: 2247,
- u&apos;thirty&apos;: 109,
- u&apos;preach&apos;: 307,
- u&apos;gypsies&apos;: 1303,
- u&apos;mcphee&apos;: 2324,
- u&apos;kurosawa&apos;: 1924,
- u&apos;canyon&apos;: 1381,
- u&apos;ang&apos;: 2030,
- u&apos;exciting&apos;: 36,
- u&apos;framework&apos;: 423,
- u&apos;blending&apos;: 184,
- u&apos;pregnancy&apos;: 2125,
- u&apos;humming&apos;: 636,
- u&apos;ana&apos;: 1892,
- u&apos;contestants&apos;: 2169,
- u&apos;burton&apos;: 1690,
- u&apos;investors&apos;: 1279,
- u&apos;billing&apos;: 3543,
- u&apos;source&apos;: 3081,
- u&apos;union&apos;: 1609,
- u&apos;culp&apos;: 229,
- u&apos;criticised&apos;: 902,
- u&apos;bothers&apos;: 233,
- u&apos;much&apos;: 2822,
- u&apos;wyman&apos;: 478,
- u&apos;stadium&apos;: 1352,
- u&apos;privilege&apos;: 2293,
- u&apos;fry&apos;: 688,
- u&apos;jackass&apos;: 2343,
- u&apos;incompetent&apos;: 763,
- u&apos;derives&apos;: 1534,
- u&apos;dixon&apos;: 3343,
- u&apos;dots&apos;: 2506,
- u&apos;obese&apos;: 848,
- u&apos;life&apos;: 65,
- u&apos;retrospect&apos;: 2380,
- u&apos;spit&apos;: 1252,
- u&apos;eastern&apos;: 106,
- u&apos;arkin&apos;: 3042,
- u&apos;courtney&apos;: 2558,
- u&apos;worker&apos;: 1193,
- u&apos;irving&apos;: 2558,
- u&apos;filmmaker&apos;: 2707,
- u&apos;shoestring&apos;: 1673,
- u&apos;modesty&apos;: 2623,
- u&apos;confinement&apos;: 1956,
- u&apos;prostitution&apos;: 1400,
- u&apos;chile&apos;: 1789,
- u&apos;child&apos;: 3227,
- u&apos;worked&apos;: 550,
- u&apos;haters&apos;: 2617,
- u&apos;spin&apos;: 1290,
- u&apos;chill&apos;: 2829,
- u&apos;ant&apos;: 1693,
- u&apos;gritty&apos;: 427,
- u&apos;adaptations&apos;: 1092,
- u&apos;redford&apos;: 229,
- u&apos;ada&apos;: 2684,
- u&apos;bogus&apos;: 3261,
- u&apos;professionally&apos;: 2232,
- u&apos;masterpieces&apos;: 1728,
- u&apos;employ&apos;: 1107,
- u&apos;symbolically&apos;: 14,
- u&apos;slam&apos;: 1998,
- u&apos;viii&apos;: 789,
- u&apos;ilona&apos;: 95,
- u&apos;reunion&apos;: 3388,
- u&apos;elaborate&apos;: 306,
- u&apos;skirts&apos;: 1790,
- u&apos;remembering&apos;: 1300,
- u&apos;ridiculously&apos;: 32,
- u&apos;familial&apos;: 1554,
- u&apos;spoof&apos;: 361,
- u&apos;they&apos;: 1174,
- u&apos;project&apos;: 656,
- u&apos;played&apos;: 1036,
- u&apos;delicatessen&apos;: 1026,
- u&apos;conditioned&apos;: 3581,
- u&apos;letdown&apos;: 211,
- u&apos;taunts&apos;: 1442,
- u&apos;elicit&apos;: 1488,
- u&apos;eighteen&apos;: 3266,
- u&apos;upscale&apos;: 720,
- u&apos;anticipating&apos;: 18,
- u&apos;farley&apos;: 2135,
- u&apos;madonna&apos;: 3022,
- u&apos;throwing&apos;: 973,
- u&apos;insatiable&apos;: 583,
- u&apos;trusted&apos;: 2445,
- u&apos;hong&apos;: 1094,
- u&apos;keen&apos;: 1615,
- u&apos;hokey&apos;: 703,
- u&apos;things&apos;: 2439,
- u&apos;unimpressed&apos;: 2254,
- u&apos;demands&apos;: 2610,
- u&apos;rebellion&apos;: 2981,
- u&apos;fatal&apos;: 2061,
- u&apos;haphazard&apos;: 2939,
- u&apos;split&apos;: 2408,
- u&apos;babies&apos;: 2121,
- u&apos;elliott&apos;: 1195,
- u&apos;principals&apos;: 824,
- u&apos;bid&apos;: 572,
- u&apos;european&apos;: 972,
- u&apos;voyager&apos;: 619,
- u&apos;fairly&apos;: 103,
- u&apos;boiled&apos;: 1460,
- u&apos;effortlessly&apos;: 425,
- u&apos;cindy&apos;: 1770,
- u&apos;marches&apos;: 51,
- u&apos;pesky&apos;: 79,
- u&apos;josef&apos;: 1687,
- u&apos;hackneyed&apos;: 1496,
- u&apos;corruption&apos;: 1069,
- u&apos;toback&apos;: 485,
- u&apos;preachy&apos;: 2352,
- u&apos;ownership&apos;: 474,
- u&apos;striving&apos;: 707,
- u&apos;pioneers&apos;: 2012,
- u&apos;tung&apos;: 471,
- u&apos;haggard&apos;: 2712,
- u&apos;tune&apos;: 561,
- u&apos;lucas&apos;: 2436,
- u&apos;stupendous&apos;: 2072,
- u&apos;presume&apos;: 174,
- u&apos;histrionic&apos;: 1805,
- u&apos;echoed&apos;: 407,
- u&apos;detracted&apos;: 696,
- u&apos;academic&apos;: 679,
- u&apos;simulated&apos;: 680,
- u&apos;echoes&apos;: 2464,
- u&apos;corporate&apos;: 822,
- u&apos;technicolor&apos;: 2526,
- u&apos;eroticism&apos;: 3626,
- u&apos;opinions&apos;: 2557,
- u&apos;boyhood&apos;: 2684,
- u&apos;letterman&apos;: 1783,
- u&apos;absurdities&apos;: 685,
- u&apos;appropriately&apos;: 1310,
- u&apos;scam&apos;: 913,
- u&apos;distribute&apos;: 206,
- u&apos;sleepy&apos;: 491,
- u&apos;forsaken&apos;: 776,
- u&apos;overcoming&apos;: 1614,
- u&apos;nearing&apos;: 2596,
- u&apos;disguise&apos;: 2891,
- u&apos;tilda&apos;: 3224,
- u&apos;falcon&apos;: 403,
- u&apos;plight&apos;: 2998,
- u&apos;credited&apos;: 593,
- u&apos;portrayed&apos;: 1631,
- u&apos;amusingly&apos;: 1110,
- u&apos;previous&apos;: 1171,
- u&apos;hai&apos;: 701,
- u&apos;enters&apos;: 2563,
- u&apos;hal&apos;: 2379,
- u&apos;ham&apos;: 1740,
- u&apos;han&apos;: 639,
- u&apos;equipment&apos;: 542,
- u&apos;ease&apos;: 3048,
- u&apos;slices&apos;: 3076,
- u&apos;had&apos;: 360,
- u&apos;advancement&apos;: 2981,
- u&apos;woodstock&apos;: 768,
- u&apos;hag&apos;: 1682,
- u&apos;macdonald&apos;: 526,
- u&apos;hay&apos;: 1229,
- u&apos;mcnamara&apos;: 948,
- u&apos;collections&apos;: 604,
- u&apos;projects&apos;: 1192,
- u&apos;innocent&apos;: 3519,
- u&apos;prison&apos;: 1624,
- u&apos;neglects&apos;: 2610,
- u&apos;har&apos;: 3601,
- u&apos;has&apos;: 360,
- u&apos;hat&apos;: 3121,
- u&apos;luscious&apos;: 97,
- u&apos;casually&apos;: 79,
- u&apos;dtv&apos;: 128,
- u&apos;elders&apos;: 2981,
- u&apos;survival&apos;: 3155,
- u&apos;posed&apos;: 2697,
- u&apos;possible&apos;: 3067,
- u&apos;cliche&apos;: 1412,
- u&apos;varney&apos;: 1336,
- u&apos;posey&apos;: 1325,
- u&apos;rocket&apos;: 292,
- u&apos;otherworldly&apos;: 209,
- u&apos;indicative&apos;: 707,
- u&apos;birth&apos;: 3227,
- u&apos;sorority&apos;: 178,
- u&apos;imposed&apos;: 1069,
- u&apos;shadow&apos;: 2210,
- u&apos;poses&apos;: 2697,
- u&apos;vigilante&apos;: 104,
- u&apos;massively&apos;: 130,
- u&apos;occurring&apos;: 448,
- u&apos;desire&apos;: 208,
- u&apos;county&apos;: 2586,
- u&apos;strengths&apos;: 1482,
- u&apos;scan&apos;: 1949,
- u&apos;victoria&apos;: 1506,
- u&apos;bobby&apos;: 628,
- u&apos;seaside&apos;: 491,
- u&apos;alice&apos;: 3096,
- u&apos;remind&apos;: 1159,
- u&apos;misled&apos;: 678,
- u&apos;steps&apos;: 3546,
- u&apos;stylised&apos;: 69,
- u&apos;prologue&apos;: 2692,
- u&apos;cheesiness&apos;: 1317,
- u&apos;moral&apos;: 922,
- u&apos;sebastian&apos;: 3217,
- u&apos;continuation&apos;: 3390,
- u&apos;bonkers&apos;: 2730,
- u&apos;battlefield&apos;: 3170,
- u&apos;attorney&apos;: 3104,
- u&apos;right&apos;: 1522,
- u&apos;old&apos;: 1472,
- u&apos;moran&apos;: 2818,
- u&apos;crowd&apos;: 617,
- u&apos;crowe&apos;: 3542,
- u&apos;czech&apos;: 282,
- u&apos;neighbors&apos;: 1154,
- u&apos;creed&apos;: 2684,
- u&apos;crown&apos;: 200,
- u&apos;santiago&apos;: 613,
- u&apos;captive&apos;: 1079,
- u&apos;sure&apos;: 290,
- u&apos;warring&apos;: 1906,
- u&apos;harassment&apos;: 194,
- u&apos;counts&apos;: 2577,
- u&apos;creep&apos;: 3431,
- u&apos;enemies&apos;: 1563,
- u&apos;consensus&apos;: 1423,
- u&apos;comeuppance&apos;: 256,
- u&apos;for&apos;: 3521,
- u&apos;bottom&apos;: 1640,
- u&apos;inhuman&apos;: 951,
- u&apos;fox&apos;: 586,
- u&apos;creative&apos;: 839,
- u&apos;repression&apos;: 1069,
- u&apos;when&apos;: 291,
- u&apos;photographers&apos;: 1303,
- u&apos;individuals&apos;: 3552,
- u&apos;exposition&apos;: 77,
- u&apos;scarier&apos;: 1992,
- u&apos;summoned&apos;: 14,
- u&apos;umm&apos;: 788,
- u&apos;howell&apos;: 31,
- u&apos;palatable&apos;: 3051,
- u&apos;shakes&apos;: 1148,
- u&apos;rooker&apos;: 1198,
- u&apos;memorably&apos;: 12,
- u&apos;fish&apos;: 1474,
- u&apos;post&apos;: 2930,
- u&apos;steiner&apos;: 2883,
- u&apos;dental&apos;: 1815,
- u&apos;stefan&apos;: 2684,
- u&apos;binder&apos;: 1334,
- u&apos;cheadle&apos;: 891,
- u&apos;shifting&apos;: 406,
- u&apos;starring&apos;: 260,
- u&apos;stylish&apos;: 110,
- u&apos;losing&apos;: 3595,
- u&apos;memorable&apos;: 159,
- u&apos;marital&apos;: 2125,
- u&apos;shaken&apos;: 284,
- u&apos;stoker&apos;: 2677,
- u&apos;transcends&apos;: 365,
- u&apos;spaceships&apos;: 2511,
- u&apos;filipino&apos;: 2576,
- u&apos;boiling&apos;: 22,
- u&apos;gaze&apos;: 3486,
- u&apos;dollars&apos;: 548,
- u&apos;tuned&apos;: 859,
- u&apos;o&apos;: 1508,
- u&apos;despair&apos;: 618,
- u&apos;repellent&apos;: 1340,
- u&apos;melville&apos;: 2094,
- u&apos;emilio&apos;: 204,
- u&apos;lacked&apos;: 1216,
- u&apos;slightly&apos;: 2183,
- u&apos;nixon&apos;: 1136,
- u&apos;bath&apos;: 261,
- u&apos;hulking&apos;: 413,
- u&apos;raised&apos;: 2770,
- u&apos;sob&apos;: 2872,
- u&apos;statements&apos;: 685,
- u&apos;facility&apos;: 718,
+ u&apos;tango&apos;: 2194,
+ u&apos;ruins&apos;: 1578,
+ u&apos;needed&apos;: 764,
+ u&apos;theatrically&apos;: 188,
+ u&apos;ambiguous&apos;: 2286,
+ u&apos;master&apos;: 2001,
+ u&apos;listed&apos;: 3,
+ u&apos;blossoms&apos;: 585,
+ u&apos;milligan&apos;: 288,
+ u&apos;gilbert&apos;: 2251,
+ u&apos;legs&apos;: 1220,
+ u&apos;bitter&apos;: 3005,
+ u&apos;genesis&apos;: 958,
+ u&apos;hewitt&apos;: 1015,
+ u&apos;danish&apos;: 1937,
+ u&apos;rewards&apos;: 356,
+ u&apos;shambles&apos;: 800,
+ u&apos;collapse&apos;: 2906,
+ u&apos;canned&apos;: 2255,
+ u&apos;predictably&apos;: 537,
+ u&apos;relative&apos;: 2169,
+ u&apos;bounty&apos;: 1062,
+ u&apos;scenery&apos;: 817,
+ u&apos;ads&apos;: 969,
+ u&apos;madison&apos;: 2324,
+ u&apos;wisdom&apos;: 211,
+ u&apos;mutilated&apos;: 1807,
+ u&apos;legally&apos;: 2484,
+ u&apos;evil&apos;: 578,
+ u&apos;finesse&apos;: 1763,
+ u&apos;zany&apos;: 1794,
+ u&apos;crawl&apos;: 2008,
+ u&apos;positively&apos;: 2437,
+ u&apos;expanding&apos;: 643,
+ u&apos;hays&apos;: 2596,
+ u&apos;ahmed&apos;: 43,
+ u&apos;peril&apos;: 106,
+ u&apos;zatoichi&apos;: 1538,
+ u&apos;showed&apos;: 1495,
+ u&apos;elegant&apos;: 3003,
+ u&apos;pantoliano&apos;: 268,
+ u&apos;outlaw&apos;: 160,
+ u&apos;surrogate&apos;: 1105,
+ u&apos;tree&apos;: 3101,
+ u&apos;rusty&apos;: 1333,
+ u&apos;nations&apos;: 628,
+ u&apos;shower&apos;: 2299,
+ u&apos;idle&apos;: 1244,
+ u&apos;peppard&apos;: 989,
+ u&apos;flavour&apos;: 2351,
+ u&apos;endure&apos;: 2671,
+ u&apos;feeling&apos;: 731,
+ u&apos;seduced&apos;: 3214,
+ u&apos;unintended&apos;: 67,
+ u&apos;acclaim&apos;: 358,
+ u&apos;groaning&apos;: 238,
+ u&apos;willingness&apos;: 147,
+ u&apos;runner&apos;: 1392,
+ u&apos;boston&apos;: 311,
+ u&apos;spectrum&apos;: 342,
+ u&apos;spent&apos;: 115,
+ u&apos;corny&apos;: 391,
+ u&apos;overs&apos;: 1863,
+ u&apos;alive&apos;: 689,
+ u&apos;dozen&apos;: 280,
+ u&apos;skips&apos;: 1367,
+ u&apos;affairs&apos;: 1879,
+ u&apos;cesar&apos;: 1200,
+ u&apos;wholesome&apos;: 1768,
+ u&apos;corbin&apos;: 517,
+ u&apos;concrete&apos;: 3276,
+ u&apos;climate&apos;: 229,
+ u&apos;kaye&apos;: 1012,
+ u&apos;responsible&apos;: 2195,
+ u&apos;gripe&apos;: 962,
+ u&apos;eagerly&apos;: 1802,
+ u&apos;connelly&apos;: 1015,
+ u&apos;recommended&apos;: 1757,
+ u&apos;causing&apos;: 1954,
+ u&apos;absorbed&apos;: 2921,
+ u&apos;amusing&apos;: 1167,
+ u&apos;doors&apos;: 1110,
+ u&apos;season&apos;: 1655,
+ u&apos;grips&apos;: 2906,
+ u&apos;susie&apos;: 491,
+ u&apos;committing&apos;: 1759,
+ u&apos;mcewan&apos;: 457,
+ u&apos;thrilled&apos;: 1087,
+ u&apos;screwing&apos;: 17,
+ u&apos;mystique&apos;: 436,
+ u&apos;cinematic&apos;: 3025,
+ u&apos;resonates&apos;: 2670,
+ u&apos;y&apos;: 697,
+ u&apos;gallagher&apos;: 1473,
+ u&apos;addict&apos;: 373,
+ u&apos;letter&apos;: 838,
+ u&apos;entry&apos;: 1270,
+ u&apos;retaining&apos;: 342,
+ u&apos;thriller&apos;: 2099,
+ u&apos;morality&apos;: 211,
+ u&apos;bradford&apos;: 3257,
+ u&apos;hut&apos;: 1001,
+ u&apos;singer&apos;: 583,
+ u&apos;stupid&apos;: 204,
+ u&apos;episode&apos;: 420,
+ u&apos;cops&apos;: 219,
+ u&apos;professor&apos;: 784,
+ u&apos;camp&apos;: 3287,
+ u&apos;drunks&apos;: 437,
+ u&apos;tech&apos;: 3245,
+ u&apos;costello&apos;: 871,
+ u&apos;scream&apos;: 1517,
+ u&apos;incomplete&apos;: 79,
+ u&apos;marvel&apos;: 799,
+ u&apos;saying&apos;: 162,
+ u&apos;cooking&apos;: 17,
+ u&apos;bomb&apos;: 2037,
+ u&apos;insects&apos;: 1416,
+ u&apos;tequila&apos;: 203,
+ u&apos;teresa&apos;: 345,
+ u&apos;bonnie&apos;: 1200,
+ u&apos;sexist&apos;: 3132,
+ u&apos;padded&apos;: 409,
+ u&apos;asia&apos;: 1038,
+ u&apos;participate&apos;: 433,
+ u&apos;lethal&apos;: 0,
+ u&apos;hungary&apos;: 1732,
+ u&apos;tempted&apos;: 1629,
+ u&apos;cheaply&apos;: 1505,
+ u&apos;ethan&apos;: 288,
+ u&apos;caper&apos;: 480,
+ u&apos;orleans&apos;: 1257,
+ u&apos;touches&apos;: 2421,
+ u&apos;busy&apos;: 2872,
+ u&apos;lights&apos;: 1110,
+ u&apos;headline&apos;: 2194,
+ u&apos;menu&apos;: 1292,
+ u&apos;buxom&apos;: 77,
+ u&apos;bust&apos;: 3074,
+ u&apos;than&apos;: 1814,
+ u&apos;rico&apos;: 2356,
+ u&apos;theme&apos;: 2119,
+ u&apos;bliss&apos;: 194,
+ u&apos;touched&apos;: 2402,
+ u&apos;rich&apos;: 2923,
+ u&apos;foolishly&apos;: 158,
+ u&apos;rice&apos;: 1200,
+ u&apos;plate&apos;: 2008,
+ u&apos;klein&apos;: 991,
+ u&apos;wide&apos;: 2874,
+ u&apos;culkin&apos;: 3167,
+ u&apos;psychiatric&apos;: 733,
+ u&apos;foremost&apos;: 2585,
+ u&apos;platt&apos;: 1413,
+ u&apos;underwritten&apos;: 530,
+ u&apos;reversal&apos;: 998,
+ u&apos;altogether&apos;: 2428,
+ u&apos;relish&apos;: 87,
+ u&apos;tawdry&apos;: 2519,
+ u&apos;droning&apos;: 1042,
+ u&apos;profoundly&apos;: 211,
+ u&apos;contributes&apos;: 266,
+ u&apos;jaguar&apos;: 1001,
+ u&apos;avenger&apos;: 2323,
+ u&apos;spilling&apos;: 195,
+ u&apos;nicely&apos;: 1258,
+ u&apos;maverick&apos;: 43,
+ u&apos;hello&apos;: 1470,
+ u&apos;dipping&apos;: 1989,
+ u&apos;patch&apos;: 1133,
+ u&apos;posh&apos;: 314,
+ u&apos;decoys&apos;: 1249,
+ u&apos;piggy&apos;: 1333,
+ u&apos;release&apos;: 50,
+ u&apos;urgency&apos;: 436,
+ u&apos;atomic&apos;: 1190,
+ u&apos;respond&apos;: 676,
+ u&apos;blew&apos;: 3029,
+ u&apos;mandatory&apos;: 1975,
+ u&apos;disaster&apos;: 876,
+ u&apos;fair&apos;: 3097,
+ u&apos;sensitivity&apos;: 786,
+ u&apos;evolving&apos;: 342,
+ u&apos;recruit&apos;: 1252,
+ u&apos;unexpectedly&apos;: 1939,
+ u&apos;goodnight&apos;: 2596,
+ u&apos;sparkling&apos;: 716,
+ u&apos;imho&apos;: 544,
+ u&apos;erika&apos;: 3167,
+ u&apos;fail&apos;: 1101,
+ u&apos;resigned&apos;: 49,
+ u&apos;skulls&apos;: 1416,
+ u&apos;best&apos;: 475,
+ u&apos;embarks&apos;: 1941,
+ u&apos;sheffer&apos;: 717,
+ u&apos;kersey&apos;: 715,
+ u&apos;manson&apos;: 1009,
+ u&apos;ambitions&apos;: 147,
+ u&apos;lots&apos;: 1518,
+ u&apos;lotr&apos;: 725,
+ u&apos;ringu&apos;: 1753,
+ u&apos;irs&apos;: 1372,
+ u&apos;wikipedia&apos;: 694,
+ u&apos;solace&apos;: 545,
+ u&apos;ringo&apos;: 1413,
+ u&apos;pressures&apos;: 887,
+ u&apos;score&apos;: 576,
+ u&apos;melissa&apos;: 1730,
+ u&apos;kisna&apos;: 829,
+ u&apos;scorn&apos;: 1063,
+ u&apos;ira&apos;: 1267,
+ u&apos;pirate&apos;: 2315,
+ u&apos;skimpy&apos;: 650,
+ u&apos;preserve&apos;: 378,
+ u&apos;claws&apos;: 894,
+ u&apos;screwball&apos;: 1236,
+ u&apos;lamas&apos;: 1156,
+ u&apos;parallels&apos;: 890,
+ u&apos;extend&apos;: 1745,
+ u&apos;nature&apos;: 151,
+ u&apos;rolled&apos;: 2736,
+ u&apos;juliet&apos;: 910,
+ u&apos;schoolboy&apos;: 261,
+ u&apos;wtc&apos;: 1168,
+ u&apos;extent&apos;: 2407,
+ u&apos;defiance&apos;: 953,
+ u&apos;carbon&apos;: 1089,
+ u&apos;debt&apos;: 2768,
+ u&apos;roller&apos;: 1083,
+ u&apos;pity&apos;: 2523,
+ u&apos;accident&apos;: 867,
+ u&apos;sacrificing&apos;: 1833,
+ u&apos;disdain&apos;: 147,
+ u&apos;country&apos;: 1038,
+ u&apos;pits&apos;: 832,
+ u&apos;readers&apos;: 1462,
+ u&apos;adventures&apos;: 198,
+ u&apos;demanded&apos;: 2876,
+ u&apos;planned&apos;: 1348,
+ u&apos;exec&apos;: 18,
+ u&apos;marrying&apos;: 770,
+ u&apos;installments&apos;: 709,
+ u&apos;argue&apos;: 95,
+ u&apos;adapted&apos;: 983,
+ u&apos;asked&apos;: 2456,
+ u&apos;rehash&apos;: 1342,
+ u&apos;shriek&apos;: 2334,
+ u&apos;maclaine&apos;: 1203,
+ u&apos;irresponsible&apos;: 2885,
+ u&apos;rednecks&apos;: 705,
+ u&apos;thirty&apos;: 629,
+ u&apos;preach&apos;: 579,
+ u&apos;cuz&apos;: 129,
+ u&apos;mcphee&apos;: 1376,
+ u&apos;kurosawa&apos;: 1949,
+ u&apos;canyon&apos;: 2125,
+ u&apos;selznick&apos;: 411,
+ u&apos;exciting&apos;: 703,
+ u&apos;framework&apos;: 267,
+ u&apos;blending&apos;: 1208,
+ u&apos;pregnancy&apos;: 1879,
+ u&apos;humming&apos;: 2548,
+ u&apos;ana&apos;: 706,
+ u&apos;contestants&apos;: 969,
+ u&apos;burton&apos;: 739,
+ u&apos;investors&apos;: 140,
+ u&apos;billing&apos;: 2199,
+ u&apos;source&apos;: 2189,
+ u&apos;union&apos;: 737,
+ u&apos;culp&apos;: 196,
+ u&apos;bothers&apos;: 708,
+ u&apos;much&apos;: 955,
+ u&apos;wyman&apos;: 509,
+ u&apos;stadium&apos;: 473,
+ u&apos;privilege&apos;: 378,
+ u&apos;fry&apos;: 1040,
+ u&apos;jackass&apos;: 978,
+ u&apos;incompetent&apos;: 63,
+ u&apos;dixon&apos;: 1040,
+ u&apos;dots&apos;: 2403,
+ u&apos;obese&apos;: 65,
+ u&apos;life&apos;: 2415,
+ u&apos;retrospect&apos;: 102,
+ u&apos;spit&apos;: 318,
+ u&apos;eastern&apos;: 1038,
+ u&apos;arkin&apos;: 2614,
+ u&apos;courtney&apos;: 828,
+ u&apos;worker&apos;: 2863,
+ u&apos;irving&apos;: 1413,
+ u&apos;filmmaker&apos;: 2016,
+ u&apos;shoestring&apos;: 1505,
+ u&apos;modesty&apos;: 1390,
+ u&apos;confinement&apos;: 733,
+ u&apos;prostitution&apos;: 373,
+ u&apos;child&apos;: 1160,
+ u&apos;worked&apos;: 274,
+ u&apos;haters&apos;: 1462,
+ u&apos;spin&apos;: 1829,
+ u&apos;chill&apos;: 1439,
+ u&apos;ant&apos;: 826,
+ u&apos;gritty&apos;: 1613,
+ u&apos;adaptations&apos;: 168,
+ u&apos;redford&apos;: 1861,
+ u&apos;ada&apos;: 1105,
+ u&apos;professionally&apos;: 1505,
+ u&apos;masterpieces&apos;: 1632,
+ u&apos;employ&apos;: 1663,
+ u&apos;slam&apos;: 1715,
+ u&apos;viii&apos;: 1195,
+ u&apos;ilona&apos;: 635,
+ u&apos;flooding&apos;: 2837,
+ u&apos;elaborate&apos;: 798,
+ u&apos;skirts&apos;: 650,
+ u&apos;remembering&apos;: 2024,
+ u&apos;laughton&apos;: 1009,
+ u&apos;they&apos;: 3268,
+ u&apos;project&apos;: 732,
+ u&apos;played&apos;: 2100,
+ u&apos;delicatessen&apos;: 1124,
+ u&apos;conditioned&apos;: 1309,
+ u&apos;letdown&apos;: 430,
+ u&apos;player&apos;: 148,
+ u&apos;elicit&apos;: 704,
+ u&apos;eighteen&apos;: 1079,
+ u&apos;upscale&apos;: 314,
+ u&apos;anticipating&apos;: 1802,
+ u&apos;madonna&apos;: 762,
+ u&apos;throwing&apos;: 774,
+ u&apos;insatiable&apos;: 1749,
+ u&apos;trusted&apos;: 1590,
+ u&apos;hong&apos;: 980,
+ u&apos;keen&apos;: 2962,
+ u&apos;hokey&apos;: 391,
+ u&apos;things&apos;: 366,
+ u&apos;demands&apos;: 147,
+ u&apos;rebellion&apos;: 2146,
+ u&apos;fatal&apos;: 3072,
+ u&apos;haphazard&apos;: 1679,
+ u&apos;split&apos;: 1675,
+ u&apos;babies&apos;: 252,
+ u&apos;elliott&apos;: 2251,
+ u&apos;principals&apos;: 722,
+ u&apos;bid&apos;: 777,
+ u&apos;european&apos;: 1460,
+ u&apos;voyager&apos;: 1319,
+ u&apos;fairly&apos;: 2185,
+ u&apos;boiled&apos;: 1173,
+ u&apos;effortlessly&apos;: 1023,
+ u&apos;cindy&apos;: 1169,
+ u&apos;inadvertently&apos;: 58,
+ u&apos;pesky&apos;: 304,
+ u&apos;josef&apos;: 142,
+ u&apos;hackneyed&apos;: 399,
+ u&apos;corruption&apos;: 340,
+ u&apos;toback&apos;: 565,
+ u&apos;preachy&apos;: 2248,
+ u&apos;ownership&apos;: 1982,
+ u&apos;striving&apos;: 1121,
+ u&apos;pioneers&apos;: 769,
+ u&apos;haggard&apos;: 2084,
+ u&apos;tune&apos;: 2119,
+ u&apos;lucas&apos;: 1724,
+ u&apos;stupendous&apos;: 643,
+ u&apos;presume&apos;: 349,
+ u&apos;histrionic&apos;: 87,
+ u&apos;echoed&apos;: 1229,
+ u&apos;academic&apos;: 2545,
+ u&apos;simulated&apos;: 504,
+ u&apos;echoes&apos;: 2139,
+ u&apos;corporate&apos;: 418,
+ u&apos;technicolor&apos;: 3003,
+ u&apos;eroticism&apos;: 2702,
+ u&apos;opinions&apos;: 1533,
+ u&apos;boyhood&apos;: 635,
+ u&apos;letterman&apos;: 944,
+ u&apos;sleeps&apos;: 2958,
+ u&apos;appropriately&apos;: 296,
+ u&apos;scam&apos;: 1158,
+ u&apos;distribute&apos;: 140,
+ u&apos;sleepy&apos;: 221,
+ u&apos;forsaken&apos;: 42,
+ u&apos;disguise&apos;: 1663,
+ u&apos;tilda&apos;: 2275,
+ u&apos;falcon&apos;: 2840,
+ u&apos;plight&apos;: 467,
+ u&apos;credited&apos;: 682,
+ u&apos;portrayed&apos;: 2100,
+ u&apos;amusingly&apos;: 87,
+ u&apos;previous&apos;: 455,
+ u&apos;hai&apos;: 746,
+ u&apos;enters&apos;: 2958,
+ u&apos;hal&apos;: 1926,
+ u&apos;ham&apos;: 3184,
+ u&apos;han&apos;: 558,
+ u&apos;equipment&apos;: 1232,
+ u&apos;ease&apos;: 478,
+ u&apos;slices&apos;: 203,
+ u&apos;had&apos;: 1409,
+ u&apos;advancement&apos;: 1750,
+ u&apos;woodstock&apos;: 993,
+ u&apos;macdonald&apos;: 1413,
+ u&apos;hay&apos;: 840,
+ u&apos;collections&apos;: 593,
+ u&apos;projects&apos;: 610,
+ u&apos;innocent&apos;: 1851,
+ u&apos;prison&apos;: 1339,
+ u&apos;neglects&apos;: 537,
+ u&apos;har&apos;: 978,
+ u&apos;has&apos;: 814,
+ u&apos;hat&apos;: 570,
+ u&apos;luscious&apos;: 1934,
+ u&apos;casually&apos;: 872,
+ u&apos;dtv&apos;: 544,
+ u&apos;elders&apos;: 887,
+ u&apos;survival&apos;: 1646,
+ u&apos;posed&apos;: 1118,
+ u&apos;possible&apos;: 1444,
+ u&apos;cliche&apos;: 654,
+ u&apos;varney&apos;: 758,
+ u&apos;posey&apos;: 2280,
+ u&apos;rocket&apos;: 895,
+ u&apos;otherworldly&apos;: 40,
+ u&apos;indicative&apos;: 200,
+ u&apos;birth&apos;: 901,
+ u&apos;sorority&apos;: 2558,
+ u&apos;imposed&apos;: 1120,
+ u&apos;shadow&apos;: 2645,
+ u&apos;poses&apos;: 659,
+ u&apos;vigilante&apos;: 160,
+ u&apos;massively&apos;: 1042,
+ u&apos;occurring&apos;: 447,
+ u&apos;desire&apos;: 2054,
+ u&apos;county&apos;: 221,
+ u&apos;strengths&apos;: 1631,
+ u&apos;scan&apos;: 1292,
+ u&apos;bobby&apos;: 520,
+ u&apos;seaside&apos;: 314,
+ u&apos;alice&apos;: 3100,
+ u&apos;remind&apos;: 531,
+ u&apos;steps&apos;: 2836,
+ u&apos;prologue&apos;: 2005,
+ u&apos;cheesiness&apos;: 286,
+ u&apos;moral&apos;: 1788,
+ u&apos;sebastian&apos;: 517,
+ u&apos;continuation&apos;: 184,
+ u&apos;bonkers&apos;: 2588,
+ u&apos;battlefield&apos;: 1667,
+ u&apos;attorney&apos;: 2584,
+ u&apos;right&apos;: 1767,
+ u&apos;old&apos;: 1079,
+ u&apos;moran&apos;: 441,
+ u&apos;crowd&apos;: 2304,
+ u&apos;crowe&apos;: 2324,
+ u&apos;czech&apos;: 3078,
+ u&apos;neighbors&apos;: 2124,
+ u&apos;creed&apos;: 2633,
+ u&apos;crown&apos;: 3260,
+ u&apos;begin&apos;: 35,
+ u&apos;captive&apos;: 953,
+ u&apos;sure&apos;: 2033,
+ u&apos;gorillas&apos;: 2240,
+ u&apos;harassment&apos;: 659,
+ u&apos;creep&apos;: 318,
+ u&apos;enemies&apos;: 2245,
+ u&apos;consensus&apos;: 2157,
+ u&apos;comeuppance&apos;: 537,
+ u&apos;for&apos;: 2355,
+ u&apos;bottom&apos;: 982,
+ u&apos;inhuman&apos;: 1283,
+ u&apos;fox&apos;: 2353,
+ u&apos;creative&apos;: 1956,
+ u&apos;repression&apos;: 80,
+ u&apos;when&apos;: 907,
+ u&apos;individuals&apos;: 70,
+ u&apos;exposition&apos;: 2040,
+ u&apos;scarier&apos;: 92,
+ u&apos;summoned&apos;: 1869,
+ u&apos;howell&apos;: 2251,
+ u&apos;palatable&apos;: 130,
+ u&apos;shakes&apos;: 1830,
+ u&apos;rooker&apos;: 112,
+ u&apos;memorably&apos;: 1189,
+ u&apos;fish&apos;: 395,
+ u&apos;steiner&apos;: 6,
+ u&apos;dental&apos;: 2371,
+ u&apos;stefan&apos;: 246,
+ u&apos;binder&apos;: 2448,
+ u&apos;cheadle&apos;: 3193,
+ u&apos;shifting&apos;: 175,
+ u&apos;starring&apos;: 751,
+ u&apos;stylish&apos;: 1940,
+ u&apos;losing&apos;: 2161,
+ u&apos;memorable&apos;: 333,
+ u&apos;marital&apos;: 1879,
+ u&apos;shaken&apos;: 472,
+ u&apos;stoker&apos;: 1494,
+ u&apos;transcends&apos;: 370,
+ u&apos;filipino&apos;: 1548,
+ u&apos;boiling&apos;: 1534,
+ u&apos;gaze&apos;: 1261,
+ u&apos;dollars&apos;: 1265,
+ u&apos;tuned&apos;: 2003,
+ u&apos;o&apos;: 677,
+ u&apos;despair&apos;: 920,
+ u&apos;repellent&apos;: 1499,
+ u&apos;melville&apos;: 1413,
+ u&apos;emilio&apos;: 623,
+ u&apos;lacked&apos;: 62,
+ u&apos;slightly&apos;: 3170,
+ u&apos;nixon&apos;: 1267,
+ u&apos;bath&apos;: 3164,
+ u&apos;hulking&apos;: 13,
+ u&apos;raised&apos;: 1748,
+ u&apos;sob&apos;: 683,
+ u&apos;statements&apos;: 723,
+ u&apos;facility&apos;: 1198,
+ u&apos;yen&apos;: 763,
+ u&apos;maxwell&apos;: 2521,
+ u&apos;marshall&apos;: 432,
+ u&apos;honeymoon&apos;: 353,
+ u&apos;sol&apos;: 43,
+ u&apos;soo&apos;: 69,
+ u&apos;son&apos;: 1437,
+ u&apos;thankful&apos;: 1402,
+ u&apos;beings&apos;: 988,
+ u&apos;daffy&apos;: 1002,
+ u&apos;magazines&apos;: 1408,
+ u&apos;raises&apos;: 2640,
+ u&apos;wrap&apos;: 1675,
+ u&apos;sox&apos;: 1903,
+ u&apos;shoots&apos;: 293,
+ u&apos;despised&apos;: 1366,
+ u&apos;fabric&apos;: 342,
+ u&apos;waits&apos;: 1068,
+ u&apos;suffice&apos;: 498,
+ u&apos;halle&apos;: 1159,
+ u&apos;knowing&apos;: 2716,
+ u&apos;raped&apos;: 1851,
+ u&apos;avail&apos;: 2900,
+ u&apos;humorous&apos;: 421,
+ u&apos;orville&apos;: 1333,
+ u&apos;grasping&apos;: 1121,
+ u&apos;charts&apos;: 1998,
+ u&apos;greatness&apos;: 3134,
+ u&apos;rapes&apos;: 353,
+ u&apos;call&apos;: 868,
+ u&apos;jang&apos;: 1187,
+ u&apos;halls&apos;: 473,
+ u&apos;launching&apos;: 2720,
+ u&apos;happy&apos;: 2276,
+ u&apos;underestimated&apos;: 643,
+ u&apos;offer&apos;: 1516,
+ u&apos;fascination&apos;: 885,
+ u&apos;forming&apos;: 1120,
+ u&apos;tigers&apos;: 839,
+ u&apos;shoot&apos;: 2095,
+ u&apos;talents&apos;: 815,
+ u&apos;understandable&apos;: 3281,
+ u&apos;weirdos&apos;: 1279,
+ u&apos;survive&apos;: 833,
+ u&apos;week&apos;: 23,
+ u&apos;congratulations&apos;: 243,
+ u&apos;silliness&apos;: 480,
+ u&apos;masquerading&apos;: 1175,
+ u&apos;inside&apos;: 2150,
+ u&apos;clause&apos;: 728,
+ u&apos;devices&apos;: 1016,
+ u&apos;smashes&apos;: 2891,
+ u&apos;epps&apos;: 2044,
+ u&apos;hinds&apos;: 1657,
+ u&apos;complications&apos;: 2930,
+ u&apos;torturing&apos;: 1821,
+ u&apos;rerun&apos;: 977,
+ u&apos;smashed&apos;: 1807,
+ u&apos;palm&apos;: 1075,
+ u&apos;duet&apos;: 150,
+ u&apos;passenger&apos;: 1325,
+ u&apos;juvenile&apos;: 1108,
+ u&apos;later&apos;: 2699,
+ u&apos;disgrace&apos;: 1351,
+ u&apos;puerto&apos;: 2356,
+ u&apos;barrymore&apos;: 2526,
+ u&apos;steady&apos;: 508,
+ u&apos;tournament&apos;: 826,
+ u&apos;textbook&apos;: 2821,
+ u&apos;proves&apos;: 2719,
+ u&apos;exist&apos;: 1480,
+ u&apos;decapitation&apos;: 1787,
+ u&apos;mrs&apos;: 3100,
+ u&apos;dealer&apos;: 2401,
+ u&apos;cassie&apos;: 1105,
+ u&apos;posting&apos;: 1755,
+ u&apos;eventual&apos;: 1120,
+ u&apos;floor&apos;: 2829,
+ u&apos;zane&apos;: 1076,
+ u&apos;pale&apos;: 3126,
+ u&apos;sisko&apos;: 2425,
+ u&apos;cambodia&apos;: 628,
+ u&apos;uttered&apos;: 2870,
  ...}</pre>
 </div>
 
@@ -8811,7 +9268,7 @@ Review 24000 of 25000
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[162]:</div>
+<div class="prompt input_prompt">In&nbsp;[185]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># For the first 10 clusters</span>
@@ -8840,34 +9297,34 @@ Review 24000 of 25000
 <div class="output_subarea output_stream output_stdout output_text">
 <pre>
 Cluster 0
-[u&apos;signs&apos;]
+[u&apos;lethal&apos;, u&apos;henchmen&apos;, u&apos;redneck&apos;, u&apos;wielding&apos;, u&apos;ranger&apos;, u&apos;minions&apos;, u&apos;scorpion&apos;]
 
 Cluster 1
-[u&apos;ramblings&apos;]
+[u&apos;functions&apos;]
 
 Cluster 2
-[u&apos;blondes&apos;, u&apos;legged&apos;, u&apos;lads&apos;, u&apos;bottoms&apos;, u&apos;roast&apos;, u&apos;hitchhiker&apos;, u&apos;lingerie&apos;, u&apos;feathers&apos;, u&apos;pork&apos;, u&apos;meadow&apos;]
+[u&apos;naish&apos;, u&apos;carroll&apos;, u&apos;scrimm&apos;, u&apos;lo&apos;, u&apos;ralph&apos;, u&apos;j&apos;, u&apos;alan&apos;, u&apos;valentine&apos;, u&apos;carrol&apos;]
 
 Cluster 3
-[u&apos;expanding&apos;, u&apos;participation&apos;, u&apos;concocted&apos;, u&apos;presently&apos;, u&apos;nadir&apos;, u&apos;capabilities&apos;]
+[u&apos;listed&apos;, u&apos;confirmed&apos;, u&apos;lists&apos;]
 
 Cluster 4
-[u&apos;swayze&apos;, u&apos;patrick&apos;]
+[u&apos;speeds&apos;, u&apos;leaps&apos;, u&apos;gears&apos;, u&apos;assembly&apos;, u&apos;mph&apos;, u&apos;slide&apos;, u&apos;onwards&apos;, u&apos;switching&apos;, u&apos;liner&apos;, u&apos;wraith&apos;, u&apos;ticking&apos;]
 
 Cluster 5
-[u&apos;bashing&apos;, u&apos;prudish&apos;, u&apos;pc&apos;, u&apos;lsd&apos;, u&apos;prude&apos;, u&apos;harmful&apos;]
+[u&apos;vital&apos;, u&apos;integral&apos;, u&apos;essential&apos;]
 
 Cluster 6
-[u&apos;archetypes&apos;, u&apos;overpowering&apos;, u&apos;integral&apos;, u&apos;pointlessness&apos;, u&apos;gibberish&apos;, u&apos;thematically&apos;, u&apos;unimportant&apos;, u&apos;neverending&apos;, u&apos;homoerotic&apos;, u&apos;contradictory&apos;, u&apos;moot&apos;]
+[u&apos;symphony&apos;, u&apos;tchaikovsky&apos;, u&apos;steiner&apos;, u&apos;rousing&apos;, u&apos;prominently&apos;, u&apos;composers&apos;, u&apos;accompanying&apos;, u&apos;busby&apos;, u&apos;instruments&apos;, u&apos;accompaniment&apos;, u&apos;crisp&apos;, u&apos;accompanied&apos;, u&apos;vocals&apos;, u&apos;upbeat&apos;, u&apos;cues&apos;, u&apos;instrumental&apos;, u&apos;jazzy&apos;, u&apos;orchestra&apos;, u&apos;lyric&apos;, u&apos;funky&apos;, u&apos;drums&apos;, u&apos;quincy&apos;, u&apos;compliments&apos;, u&apos;groovy&apos;, u&apos;goldsmith&apos;, u&apos;gershwin&apos;, u&apos;berkeley&apos;, u&apos;melody&apos;, u&apos;orchestral&apos;, u&apos;melodies&apos;, u&apos;fantastically&apos;, u&apos;rhapsody&apos;]
 
 Cluster 7
-[u&apos;colossus&apos;, u&apos;rimmer&apos;, u&apos;forbin&apos;]
+[u&apos;sperm&apos;, u&apos;anatomy&apos;]
 
 Cluster 8
-[u&apos;lighthouse&apos;, u&apos;situated&apos;, u&apos;located&apos;, u&apos;farewell&apos;]
+[u&apos;banal&apos;, u&apos;mundane&apos;, u&apos;moronic&apos;]
 
 Cluster 9
-[u&apos;believes&apos;, u&apos;says&apos;, u&apos;thinks&apos;, u&apos;loves&apos;, u&apos;knows&apos;]
+[u&apos;exactly&apos;]
 </pre>
 </div>
 </div>
@@ -8878,7 +9335,7 @@ Cluster 9
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[163]:</div>
+<div class="prompt input_prompt">In&nbsp;[186]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="k">def</span> <span class="nf">create_bag_of_centroids</span><span class="p">(</span> <span class="n">wordlist</span><span class="p">,</span> <span class="n">word_centroid_map</span> <span class="p">):</span>    
@@ -8909,7 +9366,7 @@ Cluster 9
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[164]:</div>
+<div class="prompt input_prompt">In&nbsp;[187]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Pre-allocate an array for the training set bags of centroids (for speed)</span>
@@ -8935,7 +9392,36 @@ Cluster 9
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[165]:</div>
+<div class="prompt input_prompt">In&nbsp;[191]:</div>
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython2"><pre><span class="n">train_centroids</span><span class="o">.</span><span class="n">shape</span>
+</pre></div>
+
+</div>
+</div>
+</div>
+
+<div class="output_wrapper">
+<div class="output">
+
+
+<div class="output_area"><div class="prompt output_prompt">Out[191]:</div>
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>(25000L, 3298L)</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+<div class="prompt input_prompt">In&nbsp;[192]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span class="c"># Fit a random forest and extract predictions </span>
@@ -8945,7 +9431,7 @@ Cluster 9
 <span class="n">forest</span> <span class="o">=</span> <span class="n">forest</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_centroids</span><span class="p">,</span><span class="n">train</span><span class="p">[</span><span class="s">&quot;sentiment&quot;</span><span class="p">])</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">forest</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_centroids</span><span class="p">)</span>
 <span class="c"># Write the test results output = pd.DataFrame(data={&quot;id&quot;:test[&quot;id&quot;], &quot;sentiment&quot;:result})</span>
-<span class="n">output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span> <span class="s">&quot;BagOfCentroids.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span>
+<span class="n">output</span><span class="o">.</span><span class="n">to_csv</span><span class="p">(</span> <span class="s">&quot;data/BagOfCentroids.csv&quot;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">quoting</span><span class="o">=</span><span class="mi">3</span> <span class="p">)</span>
 </pre></div>
 
 </div>
@@ -8963,19 +9449,6 @@ Cluster 9
 </div>
 </div>
 
-</div>
-</div>
-
-</div>
-<div class="cell border-box-sizing code_cell rendered">
-<div class="input">
-<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
-<div class="inner_cell">
-    <div class="input_area">
-<div class=" highlight hl-ipython2"><pre> 
-</pre></div>
-
-</div>
 </div>
 </div>
 
