@@ -6,7 +6,7 @@ certifi==14.05.14
 gnureadline==6.3.3
 ipython==3.1.0
 jsonschema==2.4.0
-mistune==0.5.1
+mistune
 ptyprocess==0.4
 pyzmq==14.5.0
 terminado==0.5
